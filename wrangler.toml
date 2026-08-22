@@ -1,11 +1,12 @@
-name = "nahan-6ondep"
+name = "panahannet"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["allow_eval_during_startup"]
 
 [[d1_databases]]
 binding = "IOT_DB"
-database_name = "iot_db"
-database_id = "222c59d0-732f-4e33-bd8a-18fa1a95fb82"
+database_name = "panahannet-db"
+database_id = "e4470318-2812-4133-b140-c89298afc094"
 
 [observability]
 enabled = true
