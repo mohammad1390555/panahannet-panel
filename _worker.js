@@ -6154,10 +6154,13 @@ async function tgBuildSubUrl(env, hostName, userId, sub = "") {
     const host = sanitizePublicHost(hostName);
     const route = stripRouteSlashes(sysConfig.apiRoute || "sync") || "sync";
     const token = userId || sub || "Default";
-    // Durable first — hashed /sub/{hash} 404s after redeploy when D1 index is cold.
-    const durable = `https://${host}/${route}?sub=${encodeURIComponent(token)}`;
-    try { await getOrCreateSubHash(env, userId, sub); } catch (e) {}
-    return durable;
+    // Prefer hashed /sub/{hash} format
+    try {
+        const hash = await getOrCreateSubHash(env, userId, sub);
+        if (hash) return `https://${host}/sub/${hash}`;
+    } catch (e) {}
+    // Fallback to legacy format
+    return `https://${host}/${route}?sub=${encodeURIComponent(token)}`;
 }
 
 /**
@@ -6175,7 +6178,14 @@ async function buildAdminSubLink(env, hostName, user) {
     const hostFb = sanitizePublicHost(hostName);
     const routeFb = stripRouteSlashes(sysConfig.apiRoute || "sync") || "sync";
     const token = userId || subName || "Default";
-    try { if (env && env.IOT_DB) await getOrCreateSubHashCached(env, userId, subName); } catch (e) {}
+    // Prefer hashed /sub/{hash} format
+    try {
+        if (env && env.IOT_DB) {
+            const hash = await getOrCreateSubHashCached(env, userId, subName);
+            if (hash) return `https://${hostFb}/sub/${hash}`;
+        }
+    } catch (e) {}
+    // Fallback to legacy format when D1 unavailable
     return `https://${hostFb}/${routeFb}?sub=${encodeURIComponent(token)}`;
 }
 
@@ -6234,6 +6244,16 @@ function buildAdminSubLinkSync(env, ctx, hostName, user) {
     const host = sanitizePublicHost(hostName);
     const route = stripRouteSlashes(sysConfig.apiRoute || "sync") || "sync";
     const token = userId || subName || "Default";
+    // Use cached hash if available (populated by prior async calls)
+    const cachedHash = _subCacheGet(userId, subName);
+    if (cachedHash && cachedHash.length === 44) {
+        return `https://${host}/sub/${cachedHash}`;
+    }
+    // Also check user record for stored hash
+    if (user.subHash && user.subHash.length === 44) {
+        return `https://${host}/sub/${user.subHash}`;
+    }
+    // Kick off background hash generation for next time
     if (env && env.IOT_DB && typeof getOrCreateSubHash === "function") {
         const p = getOrCreateSubHash(env, userId, subName).then(h => {
             if (h && h.length === 44) _subCachePut(userId, subName, h);
@@ -6241,6 +6261,7 @@ function buildAdminSubLinkSync(env, ctx, hostName, user) {
         if (typeof safeWaitUntil === "function") safeWaitUntil(ctx, p);
         else p.catch(() => {});
     }
+    // Fallback to legacy format
     return `https://${host}/${route}?sub=${encodeURIComponent(token)}`;
 }
 
