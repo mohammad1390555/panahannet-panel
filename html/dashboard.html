@@ -694,7 +694,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           Sign In
                       </button>
                       <a href="{{BOT_URL}}" target="_blank" rel="noopener" class="mt-3 w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all" style="background:rgba(34,158,217,0.12);border:1px solid rgba(34,158,217,0.35);color:#7dd3fc;">
-                          ${ico("telegram", 16)} Telegram · @{{BOT_USER}}
+                          <svg class="ico ico-telegram" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4L3 11.2l6.2 2.2L18 8l-7 8.2  .2 4.6 3.2-4.2L20 19z"/></svg> Telegram · @{{BOT_USER}}
                       </a>
                   </div>
               </div>
@@ -780,7 +780,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                               <div class="flex gap-2 w-full sm:w-auto shrink-0 justify-end">
                                   <button onclick="dismissUpdate()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition-colors" data-i18n="btn_cancel">Cancel</button>
                                   <button onclick="doUpdate()" id="update-deploy-btn" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5" data-i18n="deploy_btn">
-                                      ${ico("rocket", 14)} Deploy Now
+                                      <svg class="ico ico-rocket" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5c3 1 5 5 5 5s-4 2-7 5-5 7-5 7 3-2 5-5 5-7 5-7 4 2 5 5"/><path d="M9 15l-4 1 1-4"/></svg> Deploy Now
                                   </button>
                               </div>
                           </div>
@@ -896,9 +896,9 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                               <div class="bg-white dark:bg-darkcard rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mb-3" data-i18n="ov_system_health">System Health</p>
                                   <div class="grid grid-cols-3 gap-2">
-                                      <div class="text-center"><div id="health-db" class="text-lg">${ico("db", 18)}</div><p class="text-[10px] text-slate-500 mt-1">D1</p></div>
-                                      <div class="text-center"><div id="health-tg" class="text-lg">${ico("telegram", 18)}</div><p class="text-[10px] text-slate-500 mt-1">Telegram</p></div>
-                                      <div class="text-center"><div id="health-cf" class="text-lg">${ico("cloud", 18)}</div><p class="text-[10px] text-slate-500 mt-1">Cloudflare</p></div>
+                                      <div class="text-center"><div id="health-db" class="text-lg"><svg class="ico ico-db" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></div><p class="text-[10px] text-slate-500 mt-1">D1</p></div>
+                                      <div class="text-center"><div id="health-tg" class="text-lg"><svg class="ico ico-telegram" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4L3 11.2l6.2 2.2L18 8l-7 8.2  .2 4.6 3.2-4.2L20 19z"/></svg></div><p class="text-[10px] text-slate-500 mt-1">Telegram</p></div>
+                                      <div class="text-center"><div id="health-cf" class="text-lg"><svg class="ico ico-cloud" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 00.4-8 6 6 0 00-11.4 2A3.5 3.5 0 007 18z"/></svg></div><p class="text-[10px] text-slate-500 mt-1">Cloudflare</p></div>
                                   </div>
                                   <p class="text-[10px] text-slate-400 mt-3 text-center"><span data-i18n="ov_uptime">Uptime</span>: <span id="health-uptime" class="font-mono font-bold">—</span></p>
                               </div>
@@ -920,7 +920,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                               <div class="bg-white dark:bg-darkcard rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-3">
                                       <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="ov_sec_events">Security Events</span>
-                                      <button onclick="loadSecurity()" class="text-[11px] text-primary font-bold">${ico("refresh", 14)}</button>
+                                      <button onclick="loadSecurity()" class="text-[11px] text-primary font-bold"><svg class="ico ico-refresh" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 10-2.3 5.5M20 12V6m0 6h-6"/></svg></button>
                                   </div>
                                   <div id="sec-events-list" class="space-y-1 max-h-44 overflow-y-auto text-[11px]"></div>
                               </div>
@@ -1078,7 +1078,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                           <p class="text-xs text-slate-500" data-i18n="ping_test_desc">Test response time to your active node target.</p>
                                       </div>
                                       <button onclick="runPingTest()" class="px-6 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold rounded-xl transition-colors text-sm" data-i18n="run_diagnostics">
-                                          ${ico("lab", 14)} Run Diagnostics
+                                          <svg class="ico ico-lab" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"/></svg> Run Diagnostics
                                       </button>
                                   </div>
                                   <div id="ping-results" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 hidden">
@@ -1107,12 +1107,12 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                       <div id="view-settings" class="hidden">
                           <!-- Stage 4: Settings section nav (visual tab over existing System view) -->
                           <div class="mb-3 flex flex-wrap gap-2 bg-white dark:bg-darkcard p-2 rounded-2xl border border-slate-200 dark:border-darkborder shadow-sm">
-                              <button data-settings-pill="general"      onclick="switchSettingsSection('general')"      class="px-3 py-2 rounded-xl text-xs font-bold pn-pill-on bg-primary text-white">${ico("settings", 14)} <span data-i18n="set_tab_general">General</span></button>
-                              <button data-settings-pill="protocol"     onclick="switchSettingsSection('protocol')"     class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">${ico("node", 14)} <span data-i18n="set_tab_protocol">Protocol</span></button>
-                              <button data-settings-pill="network"      onclick="switchSettingsSection('network')"      class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">${ico("radio", 14)} <span data-i18n="set_tab_network">Network</span></button>
-                              <button data-settings-pill="subscription" onclick="switchSettingsSection('subscription')" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">${ico("link", 14)} <span data-i18n="set_tab_sub">Subscription</span></button>
-                              <button data-settings-pill="telegram"     onclick="switchSettingsSection('telegram')"     class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">${ico("telegram", 14)} <span data-i18n="set_tab_tg">Telegram</span></button>
-                              <button data-settings-pill="cloudflare"   onclick="switchSettingsSection('cloudflare')"   class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">${ico("cloud", 14)} <span data-i18n="set_tab_cf">Cloudflare</span></button>
+                              <button data-settings-pill="general"      onclick="switchSettingsSection('general')"      class="px-3 py-2 rounded-xl text-xs font-bold pn-pill-on bg-primary text-white"><svg class="ico ico-settings" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M4.2 6.2l1.5 1.5M18.3 16.3l1.5 1.5M3 12h2M19 12h2M4.2 17.8l1.5-1.5M18.3 7.7l1.5-1.5"/></svg> <span data-i18n="set_tab_general">General</span></button>
+                              <button data-settings-pill="protocol"     onclick="switchSettingsSection('protocol')"     class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="ico ico-node" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="18" cy="17" r="2.2"/><path d="M8 12h8M16.2 8.6L8.2 11.2M16.2 15.4L8.2 12.8"/></svg> <span data-i18n="set_tab_protocol">Protocol</span></button>
+                              <button data-settings-pill="network"      onclick="switchSettingsSection('network')"      class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="ico ico-radio" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19a9 9 0 0114 0M8 16a5 5 0 018 0"/><circle cx="12" cy="20" r="1"/></svg> <span data-i18n="set_tab_network">Network</span></button>
+                              <button data-settings-pill="subscription" onclick="switchSettingsSection('subscription')" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="ico ico-link" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.1 0l2-2a5 5 0 00-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 00-7.1 0l-2 2a5 5 0 007.1 7.1l1.1-1.1"/></svg> <span data-i18n="set_tab_sub">Subscription</span></button>
+                              <button data-settings-pill="telegram"     onclick="switchSettingsSection('telegram')"     class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="ico ico-telegram" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4L3 11.2l6.2 2.2L18 8l-7 8.2  .2 4.6 3.2-4.2L20 19z"/></svg> <span data-i18n="set_tab_tg">Telegram</span></button>
+                              <button data-settings-pill="cloudflare"   onclick="switchSettingsSection('cloudflare')"   class="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="ico ico-cloud" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 00.4-8 6 6 0 00-11.4 2A3.5 3.5 0 007 18z"/></svg> <span data-i18n="set_tab_cf">Cloudflare</span></button>
                           </div>
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder grid grid-cols-1 md:grid-cols-2 gap-5">
                               <div class="space-y-1">
@@ -1143,7 +1143,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <div id="port-checkboxes-container" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder p-4 rounded-xl space-y-3 font-mono text-xs max-h-48 overflow-y-auto">
                                       <!-- TLS ports -->
                                       <div class="space-y-1.5">
-                                          <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500">${ico("lock", 12)} Secure (TLS)</div>
+                                          <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500"><svg class="ico ico-lock" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> Secure (TLS)</div>
                                           <div class="grid grid-cols-2 gap-2">
                                               <label class="flex items-center gap-2 p-1.5 rounded bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 cursor-pointer hover:border-primary transition">
                                                   <input type="checkbox" value="443" onchange="togglePortCheckbox('443', this.checked)" class="accent-primary">
@@ -1173,7 +1173,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                       </div>
                                       <!-- Non-TLS ports -->
                                       <div class="space-y-1.5 pt-1 border-t border-slate-200 dark:border-slate-700">
-                                          <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500">${ico("unlock", 12)} Standard</div>
+                                          <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500"><svg class="ico ico-unlock" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 017.5-2"/></svg> Standard</div>
                                           <div class="grid grid-cols-2 gap-2">
                                               <label class="flex items-center gap-2 p-1.5 rounded bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 cursor-pointer hover:border-primary transition">
                                                   <input type="checkbox" value="80" onchange="togglePortCheckbox('80', this.checked)" class="accent-primary">
@@ -1222,14 +1222,14 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_pass">Master Key</label>
                                   <div class="relative">
                                       <input type="password" id="cfg-pass" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none pe-12">
-                                      <button type="button" onclick="const n=__id('cfg-pass');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">${ico("eye", 16)}</button>
+                                      <button type="button" onclick="const n=__id('cfg-pass');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><svg class="ico ico-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
                                   </div>
                               </div>
                               
             <!-- AI ASSISTANT SETTINGS -->
             <div class="p-5 rounded-2xl border border-slate-200 dark:border-darkborder bg-white dark:bg-darkcard shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
-                    ${ico("bot", 22)}
+                    <svg class="ico ico-bot" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg>
                     <h3 class="font-bold text-lg text-slate-800 dark:text-white" data-i18n="ai_settings">AI Assistant</h3>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -1289,7 +1289,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <input type="text" id="cfg-github-repo" placeholder="owner/repo" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                   <div class="flex justify-start items-center gap-2 mt-2">
                                       <button type="button" onclick="triggerManualRedeploy()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors border border-primary/20">
-                                          ${ico("refresh", 14)} <span data-i18n="btn_redeploy_force">Force Redeploy / Switch Format</span>
+                                          <svg class="ico ico-refresh" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 10-2.3 5.5M20 12V6m0 6h-6"/></svg> <span data-i18n="btn_redeploy_force">Force Redeploy / Switch Format</span>
                                       </button>
                                   </div>
                               </div>
@@ -1348,7 +1348,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                                                ${ico("key", 14)} <span data-i18n="lbl_api_keys">Panel API Keys</span>
+                                                <svg class="ico ico-key" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="14" r="3.2"/><path d="M11 14h10v3m-4-3v3"/></svg> <span data-i18n="lbl_api_keys">Panel API Keys</span>
                                             </h3>
                                             <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="desc_api_keys">Generate API keys to securely connect remote panels. Remote panels use these keys instead of sharing your master key.</p>
                                         </div>
@@ -1369,10 +1369,10 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <h3 class="text-sm uppercase font-bold text-slate-400 tracking-wider" data-i18n="backup_restore_title">Backup & Restore</h3>
                                   <div class="flex flex-col sm:flex-row gap-4">
                                       <button onclick="exportConfig()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors text-sm" data-i18n="export_btn">
-                                          ${ico("download", 14)} Export Configuration (JSON)
+                                          <svg class="ico ico-download" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/></svg> Export Configuration (JSON)
                                       </button>
                                       <label class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors text-sm text-center cursor-pointer">
-                                          <span data-i18n="import_btn">${ico("upload", 14)} Import Configuration (JSON)</span>
+                                          <span data-i18n="import_btn"><svg class="ico ico-upload" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V9m0 0l-4 4m4-4l4 4M5 5h14"/></svg> Import Configuration (JSON)</span>
                                           <input type="file" id="import-file" class="hidden" accept=".json" onchange="importConfig(event)">
                                       </label>
                                   </div>
@@ -1387,7 +1387,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("globe", 18)}
+                                      <svg class="ico ico-globe" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M3 12h18M12 4a12 12 0 010 16M12 4a12 12 0 000 16"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_network_dns">Network & DNS</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1430,7 +1430,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("link", 18)}
+                                      <svg class="ico ico-link" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.1 0l2-2a5 5 0 00-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 00-7.1 0l-2 2a5 5 0 007.1 7.1l1.1-1.1"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_proxy_relay">Proxy & Relay</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1461,7 +1461,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("file", 18)}
+                                      <svg class="ico ico-file" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7V3z"/><path d="M14 3v5h5"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_subscription">Subscription</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1502,7 +1502,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("bolt", 18)}
+                                      <svg class="ico ico-bolt" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L6 13h6l-1 8 7-10h-6l1-8z"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_protocol">Protocol</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1525,7 +1525,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 overflow-hidden" data-accordion>
                                <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/30 transition-colors">
                                    <div class="flex items-center gap-3">
-                                       ${ico("lab", 18)}
+                                       <svg class="ico ico-lab" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"/></svg>
                                        <span class="text-sm font-bold text-indigo-700 dark:text-indigo-300" data-i18n="other_nodes_title">Other Nodes</span>
                                    </div>
                                    <svg class="w-4 h-4 text-indigo-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1559,7 +1559,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                       <div>
                                           <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="add_node_apikey">API Key</label>
                                           <input type="password" id="add-node-apikey" placeholder="PANAHANNET_..." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono pe-12">
-                                          <button type="button" onclick="const n=__id('add-node-apikey');n.type=n.type==='password'?'text':'password'" class="absolute end-14 mt-[-36px] px-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">${ico("eye", 16)}</button>
+                                          <button type="button" onclick="const n=__id('add-node-apikey');n.type=n.type==='password'?'text':'password'" class="absolute end-14 mt-[-36px] px-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><svg class="ico ico-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
                                       </div>
                                   </div>
                                   <div class="px-6 py-4 border-t border-slate-200 dark:border-darkborder flex justify-end gap-2">
@@ -1573,7 +1573,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("bot", 18)}
+                                      <svg class="ico ico-bot" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_telegram">Telegram Bot</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1584,7 +1584,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                           <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_tg_token">Bot Token</label>
                                           <div class="relative">
                                               <input type="password" id="cfg-tg-token" placeholder="123456:ABC-DEF1234ghIkl-zyx5c" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm pe-12">
-                                              <button type="button" onclick="const n=__id('cfg-tg-token');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">${ico("eye", 16)}</button>
+                                              <button type="button" onclick="const n=__id('cfg-tg-token');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><svg class="ico ico-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
                                           </div>
                                       </div>
                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1607,7 +1607,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
-                                      ${ico("cloud", 18)}
+                                      <svg class="ico ico-cloud" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h10a4 4 0 00.4-8 6 6 0 00-11.4 2A3.5 3.5 0 007 18z"/></svg>
                                       <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_cloudflare">Cloudflare</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1623,7 +1623,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                               <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_cf_token">CF API Token</label>
                                               <div class="relative">
                                                   <input type="password" id="cfg-cf-token" placeholder="Bearer Token (Read Analytics)" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono pe-12">
-                                                  <button type="button" onclick="const n=__id('cfg-cf-token');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">${ico("eye", 16)}</button>
+                                                  <button type="button" onclick="const n=__id('cfg-cf-token');n.type=n.type==='password'?'text':'password'" class="absolute inset-y-0 end-0 flex items-center px-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><svg class="ico ico-eye" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
                                               </div>
                                           </div>
                                       </div>
@@ -1636,7 +1636,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                       <div class="border-t border-slate-100 dark:border-darkborder pt-3">
                                           <button type="button" onclick="__id('cf-helper-guide').classList.toggle('hidden')" class="w-full text-start px-4 py-3 bg-primary/10 hover:bg-primary/15 text-primary text-xs font-bold rounded-xl flex items-center justify-between transition-colors">
                                               <span class="flex items-center gap-1.5">
-                                                  ${ico("spark", 14)} <span data-i18n="cf_help_title">Need help getting these? Beginner's Guide</span>
+                                                  <svg class="ico ico-spark" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.4 6.2L20 12l-6.6 2.8L12 21l-1.4-6.2L4 12l6.6-2.8L12 3z"/></svg> <span data-i18n="cf_help_title">Need help getting these? Beginner's Guide</span>
                                               </span>
                                               <span class="text-[10px] transform transition-transform duration-200">▼</span>
                                           </button>
@@ -1660,7 +1660,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                         <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden mt-4" data-accordion>
                             <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <div class="flex items-center gap-3">
-                                    ${ico("phone", 18)}
+                                    <svg class="ico ico-phone" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 18h2"/></svg>
                                     <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="download_center">Download Center</span>
                                 </div>
                                 <svg class="w-4 h-4 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -1694,7 +1694,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                         <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden mt-4" data-accordion>
                             <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <div class="flex items-center gap-3">
-                                    ${ico("bot", 18)}
+                                    <svg class="ico ico-bot" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg>
                                     <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="tg_shop_settings">Telegram Shop</span>
                                 </div>
                                 <svg class="w-4 h-4 text-slate-400 transform transition-transform accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -2039,7 +2039,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <div class="flex items-center gap-2">
                                       <button onclick="exportLogsCSV()" class="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold transition-colors" data-i18n="logs_export">⬇ Export CSV</button>
                                       <button onclick="loadLogs()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors">
-                                          ${ico("refresh", 14)} <span data-i18n="logs_refresh">Refresh</span>
+                                          <svg class="ico ico-refresh" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 10-2.3 5.5M20 12V6m0 6h-6"/></svg> <span data-i18n="logs_refresh">Refresh</span>
                                       </button>
                                   </div>
                               </div>
@@ -2287,16 +2287,16 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                   <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3" data-i18n="more_menu">More</h3>
                   <div class="grid grid-cols-2 gap-2">
                       <button onclick="closeMobileMore();switchTab('info')" class="native-press flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-200" style="min-height:56px;">
-                          ${ico("link", 18)}<span data-i18n="tab_info">Endpoints</span>
+                          <svg class="ico ico-link" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 007.1 0l2-2a5 5 0 00-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 00-7.1 0l-2 2a5 5 0 007.1 7.1l1.1-1.1"/></svg><span data-i18n="tab_info">Endpoints</span>
                       </button>
                       <button onclick="closeMobileMore();switchTab('network')" class="native-press flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-200" style="min-height:56px;">
-                          ${ico("chart", 18)}<span data-i18n="tab_status">Metrics</span>
+                          <svg class="ico ico-chart" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16M7 16v-5M12 16V8M17 16v-8"/></svg><span data-i18n="tab_status">Metrics</span>
                       </button>
                       <button onclick="closeMobileMore();switchTab('settings')" class="native-press flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-200" style="min-height:56px;">
                           <span class="text-xl">⚙️</span><span data-i18n="tab_settings">System</span>
                       </button>
                       <button onclick="closeMobileMore();switchTab('advanced')" class="native-press flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-sm font-bold text-slate-700 dark:text-slate-200" style="min-height:56px;">
-                          ${ico("wrench", 18)}<span data-i18n="tab_adv">Advanced</span>
+                          <svg class="ico ico-wrench" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 015 5L12 19l-4-1-1-4 7.5-7.5zM5 19l3-3"/></svg><span data-i18n="tab_adv">Advanced</span>
                       </button>
                   </div>
                   <button onclick="closeMobileMore()" class="w-full mt-3 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-sm font-bold text-slate-500" data-i18n="close">Close</button>
@@ -6218,15 +6218,15 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
   
 <!-- AI Chat Widget -->
 <div class="ai-chat-btn hidden" id="aiChatBtn" onclick="toggleAiChat()" title="AI Assistant">
-    ${ico("bot", 22)}
+    <svg class="ico ico-bot" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg>
 </div>
 <div class="ai-chat-panel" id="aiChatPanel">
     <div class="ai-chat-header" onclick="toggleAiChat()">
-        <h3>${ico("bot", 16)} AI Assistant</h3>
+        <h3><svg class="ico ico-bot" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg> AI Assistant</h3>
         <button class="close-btn" onclick="event.stopPropagation();toggleAiChat()">&#10005;</button>
     </div>
     <div class="ai-chat-messages" id="aiChatMessages">
-        <div class="ai-msg assistant">${ico("bot", 16)} PANAHANNET copilot online. What should we do?</div>
+        <div class="ai-msg assistant"><svg class="ico ico-bot" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 8V5M9 13h.01M15 13h.01M8 20h8"/></svg> PANAHANNET copilot online. What should we do?</div>
     </div>
     <div class="ai-chat-actions">
         <button onclick="clearAiChat()">&#128465; Clear</button>
