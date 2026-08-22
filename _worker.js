@@ -802,6 +802,43 @@ const SYSTEM_DEFAULTS = {
     cfApiToken: "",
     cfWorkerName: "",
     isPaused: false,
+    // ═══ Payment Gateway ═══
+    zarinpalMerchant: "",
+    zarinpalCallback: "",
+    cryptoWallet: "",
+    autoApprovePayment: false,
+    // ═══ Loyalty & Cashback ═══
+    cashbackPercent: 5,
+    loyaltyThreshold: 10,
+    loyaltyRewardDays: 30,
+    // ═══ Auto-Renewal ═══
+    autoRenewEnabled: true,
+    renewReminderDays: [7, 3, 1],
+    gracePeriodDays: 3,
+    // ═══ Fraud Detection ═══
+    fraudMaxIpsPerUser: 5,
+    fraudMaxAccountsPerIp: 3,
+    fraudAlertEnabled: true,
+    // ═══ Multi-level Referral ═══
+    refLevel1Percent: 10,
+    refLevel2Percent: 5,
+    // ═══ Campaign ═══
+    campaignActive: false,
+    campaignDiscount: 0,
+    campaignEndMs: 0,
+    campaignName: "",
+    // ═══ 2FA ═══
+    twoFactorEnabled: false,
+    // ═══ Device Limit ═══
+    deviceLimitEnabled: false,
+    maxDevicesPerUser: 2,
+    // ═══ Daily Report ═══
+    dailyReportEnabled: true,
+    dailyReportHour: 21,
+    // ═══ Gift Cards ═══
+    giftCards: [],
+    // ═══ Tiered Pricing ═══
+    tieredPricing: [],
     silentAlerts: false,
     githubRepo: "mohammad1390555/panahannet-panel",
     nameStrategy: "default",
@@ -2524,6 +2561,10 @@ workerHandler = /** @type {any} */ ({
                 changelog: `/${encodeURI(sysConfig.apiRoute)}/api/changelog`,
                 security: `/${encodeURI(sysConfig.apiRoute)}/api/security`,
                 tgFile: `/${encodeURI(sysConfig.apiRoute)}/api/tg-file`,
+                payment: `/${encodeURI(sysConfig.apiRoute)}/api/payment`,
+                campaign: `/${encodeURI(sysConfig.apiRoute)}/api/campaign`,
+                fraud: `/${encodeURI(sysConfig.apiRoute)}/api/fraud`,
+                revenue: `/${encodeURI(sysConfig.apiRoute)}/api/revenue`,
                 aiAdmin: `/${encodeURI(sysConfig.apiRoute)}/api/ai/admin`,
                 aiUser: `/${encodeURI(sysConfig.apiRoute)}/api/ai/user`,
                 aiConfig: `/${encodeURI(sysConfig.apiRoute)}/api/ai/config`,
@@ -2651,6 +2692,18 @@ workerHandler = /** @type {any} */ ({
                 if (reqPath === routes.syncPanel) {
                     if (request.method !== "POST") return new Response("405", { status: 405 });
                     return await handleSyncPanel(request, env, ctx);
+                }
+                if (reqPath === routes.payment || reqPath.endsWith('/api/payment')) {
+                    return await handlePaymentApi(request, env, ctx);
+                }
+                if (reqPath === routes.revenue || reqPath.endsWith('/api/revenue')) {
+                    return await handleRevenueApi(request, env, ctx);
+                }
+                if (reqPath === routes.fraud || reqPath.endsWith('/api/fraud')) {
+                    return await handleFraudApi(request, env, ctx);
+                }
+                if (reqPath === routes.campaign || reqPath.endsWith('/api/campaign')) {
+                    return await handleCampaignApi(request, env, ctx);
                 }
                 if (reqPath === routes.tg) {
                     if (request.method !== "POST") return new Response("405", { status: 405 });
@@ -6673,6 +6726,8 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
 
     // ── Buy: list packages ──
     if (action === "buy") {
+        // Show campaign banner if active
+        const campaignActive = sysConfig.campaignActive && sysConfig.campaignEndMs > Date.now();
         if (!sysConfig.tgPurchaseEnabled) {
             await tgSendOrEdit(chatId, messageId, tgT(lang, "purchase_disabled"), [[{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]]);
             return true;
@@ -7079,6 +7134,72 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
     }
 
     // ── Support ──
+    
+    // ═══ /test - Speed Test ═══
+    if (/^\/test\b/i.test(text)) {
+        await tgApiCall("sendChatAction", { chat_id: chatId, action: "typing" });
+        const results = await runSpeedTest(hostName);
+        let msg = "🚀 *تست سرعت سرورها*\n\n";
+        results.forEach(r => {
+            const icon = r.status === "online" ? "🟢" : r.status === "degraded" ? "🟡" : "🔴";
+            msg += `${icon} *${r.name}*: ${r.latency >= 0 ? r.latency + "ms" : "آفلاین"}\n`;
+        });
+        msg += "\n💡 سرور با پینگ کمتر = سرعت بهتر";
+        await tgApiCall("sendMessage", { chat_id: chatId, text: msg, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]] } });
+        return true;
+    }
+
+    // ═══ /status - Server Status ═══
+    if (/^\/status\b/i.test(text)) {
+        const users = sysConfig.users || [];
+        const now = Date.now();
+        const active = users.filter(u => !u.isPaused && (!u.expiryMs || u.expiryMs > now)).length;
+        const up = isolateStartTime ? Math.floor((Date.now() - isolateStartTime) / 1000) : 0;
+        const upStr = up > 3600 ? Math.floor(up/3600) + "h " + Math.floor((up%3600)/60) + "m" : Math.floor(up/60) + "m";
+        await tgApiCall("sendMessage", { chat_id: chatId, text: `📡 *وضعیت سرویس*\n\n🟢 وضعیت: *آنلاین*\n👥 کاربران فعال: *${active}*\n📡 اتصالات: *${activeConnections}*\n⏱ آپ‌تایم: *${upStr}*\n🔖 نسخه: ${CURRENT_VERSION}`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]] } });
+        return true;
+    }
+
+    // ═══ /gift - Redeem Gift Card ═══
+    if (/^\/gift\s+(\S+)/i.test(text)) {
+        const code = text.match(/^\/gift\s+(\S+)/i)[1].toUpperCase();
+        const linked = tgGetLinkedUser(String(tgUserId || ""), "");
+        if (!linked || !linked.userId) {
+            await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ ابتدا ثبت‌نام کنید.", parse_mode: "Markdown" });
+            return true;
+        }
+        const card = await redeemGiftCard(env, code, linked.userId);
+        if (card) {
+            await tgApiCall("sendMessage", { chat_id: chatId, text: `🎁 *گیفت‌کارت فعال شد!*\n\n📅 ${card.days} روز\n💾 ${card.gb || "∞"} GB\n\n✅ سرویس شما تمدید شد.`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "📊 سرویس‌ها", callback_data: "u:services:0" }]] } });
+        } else {
+            await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ کد گیفت‌کارت نامعتبر یا استفاده شده.", parse_mode: "Markdown" });
+        }
+        return true;
+    }
+    if (/^\/gift\b/i.test(text)) {
+        await tgApiCall("sendMessage", { chat_id: chatId, text: "🎁 *گیفت‌کارت*\n\nکد گیفت‌کارت را بفرستید:\n`/gift PNH-XXXXX`", parse_mode: "Markdown" });
+        return true;
+    }
+
+    // ═══ /usage - My Usage ═══
+    if (/^\/usage\b/i.test(text)) {
+        const linked = tgGetLinkedUser(String(tgUserId || ""), "");
+        if (!linked || !linked.userId) {
+            await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ ابتدا ثبت‌نام کنید.", parse_mode: "Markdown" });
+            return true;
+        }
+        const user = (sysConfig.users || []).find(u => u.id === linked.userId);
+        if (!user) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ سرویسی یافت نشد.", parse_mode: "Markdown" }); return true; }
+        const idClean = user.id.replace(/-/g, "").toLowerCase();
+        const usage = (sysUsageCache?.users?.[idClean]) || { reqs: 0 };
+        const usedGB = ((usage.reqs || 0) / 6000).toFixed(2);
+        const limitGB = user.limitTotalReq ? (user.limitTotalReq / 6000).toFixed(1) : "∞";
+        const expiry = user.expiryMs ? new Date(user.expiryMs).toLocaleDateString("fa-IR") : "نامحدود";
+        const daysLeft = user.expiryMs ? Math.max(0, Math.ceil((user.expiryMs - Date.now()) / 86400000)) : "∞";
+        await tgApiCall("sendMessage", { chat_id: chatId, text: `📊 *مصرف من*\n\n👤 ${user.name}\n💾 مصرف: *${usedGB} GB* از ${limitGB} GB\n📅 انقضا: ${expiry} (${daysLeft} روز)\n⏸ وضعیت: ${user.isPaused ? "متوقف" : "فعال"}`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "🛒 خرید", callback_data: "u:buy" }, { text: tgT(lang, "main_menu"), callback_data: "u:home" }]] } });
+        return true;
+    }
+
     if (action === "support") {
         const supportText = sysConfig.tgSupportText || (lang === "fa" ? "پیامت را همین‌جا بفرست. ادمین جواب می‌دهد." : "Send your message here. An admin will reply.");
         tgSetState(tgUserId, { awaiting: "support_msg" });
@@ -7653,6 +7774,349 @@ async function tgBroadcast(env, adminChatId, text) {
     });
 }
 
+
+// ════════════════════════════════════════════════════════════
+//  PAYMENT GATEWAY (Zarinpal + Crypto)
+// ════════════════════════════════════════════════════════════
+async function handlePaymentApi(request, env, ctx) {
+    const url = new URL(request.url);
+    const method = request.method;
+    const authHeader = request.headers.get("Authorization") || "";
+    const authKey = authHeader.replace("Bearer ", "") || url.searchParams.get("key") || "";
+    const isAuth = constantTimeEqual(authKey, sysConfig.masterKey) || isPanelApiKey(authKey);
+
+    if (method === "POST") {
+        const body = await request.json();
+        const action = body.action;
+
+        // Create payment request (Zarinpal)
+        if (action === "create" && !isAuth) {
+            // User-initiated payment
+            const { amount, userId, packageId } = body;
+            if (!amount || amount < 1000) return new Response(JSON.stringify({ success: false, error: "invalid_amount" }), { status: 400, headers: { "Content-Type": "application/json" } });
+            
+            const merchant = sysConfig.zarinpalMerchant;
+            if (!merchant) return new Response(JSON.stringify({ success: false, error: "gateway_not_configured" }), { status: 400, headers: { "Content-Type": "application/json" } });
+
+            const receiptId = crypto.randomUUID();
+            const callbackUrl = `https://${url.hostname}/${sysConfig.apiRoute}/api/payment?action=callback&receipt=${receiptId}`;
+            
+            try {
+                const res = await fetch("https://api.zarinpal.com/pg/v4/payment/request.json", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        merchant_id: merchant,
+                        amount: amount,
+                        callback_url: callbackUrl,
+                        description: `PANAHANNET - ${packageId || "wallet"}`,
+                        metadata: { receipt_id: receiptId, user_id: userId || "" }
+                    }),
+                    signal: AbortSignal.timeout(10000)
+                });
+                const data = await res.json();
+                if (data.data && data.data.code === 100) {
+                    // Store pending receipt
+                    const receipt = { id: receiptId, amount, userId, packageId, status: "pending", createdAt: Date.now(), authority: data.data.authority };
+                    sysConfig.tgReceipts = sysConfig.tgReceipts || [];
+                    sysConfig.tgReceipts.push(receipt);
+                    await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+                    return new Response(JSON.stringify({ success: true, authority: data.data.authority, paymentUrl: `https://www.zarinpal.com/pg/StartPay/${data.data.authority}` }), { headers: { "Content-Type": "application/json" } });
+                }
+                return new Response(JSON.stringify({ success: false, error: data.errors?.message || "payment_failed" }), { status: 500, headers: { "Content-Type": "application/json" } });
+            } catch (e) {
+                return new Response(JSON.stringify({ success: false, error: "gateway_error" }), { status: 502, headers: { "Content-Type": "application/json" } });
+            }
+        }
+
+        // Zarinpal callback
+        if (action === "callback") {
+            const authority = url.searchParams.get("Authority");
+            const status = url.searchParams.get("Status");
+            const receiptId = url.searchParams.get("receipt");
+            const receipt = (sysConfig.tgReceipts || []).find(r => r.id === receiptId);
+            
+            if (status === "OK" && receipt) {
+                try {
+                    const res = await fetch("https://api.zarinpal.com/pg/v4/payment/verify.json", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ merchant_id: sysConfig.zarinpalMerchant, amount: receipt.amount, authority }),
+                        signal: AbortSignal.timeout(10000)
+                    });
+                    const data = await res.json();
+                    if (data.data && data.data.code === 100) {
+                        receipt.status = "approved";
+                        receipt.approvedAt = Date.now();
+                        receipt.refId = data.data.ref_id;
+                        // Auto-activate package or charge wallet
+                        if (receipt.packageId) {
+                            await activatePackageForUser(env, receipt.userId, receipt.packageId);
+                        } else {
+                            await chargeUserWallet(env, receipt.userId, receipt.amount);
+                        }
+                        // Apply cashback
+                        await applyCashback(env, receipt.userId, receipt.amount);
+                        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+                        return new Response(JSON.stringify({ success: true, message: "Payment verified" }), { headers: { "Content-Type": "application/json" } });
+                    }
+                } catch (e) {}
+            }
+            if (receipt) { receipt.status = "rejected"; receipt.rejectedAt = Date.now(); }
+            await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+            return new Response(JSON.stringify({ success: false, message: "Payment failed or cancelled" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }
+
+        // Admin: configure gateway
+        if (action === "configure" && isAuth) {
+            if (body.zarinpalMerchant !== undefined) sysConfig.zarinpalMerchant = body.zarinpalMerchant;
+            if (body.cryptoWallet !== undefined) sysConfig.cryptoWallet = body.cryptoWallet;
+            if (body.autoApprovePayment !== undefined) sysConfig.autoApprovePayment = body.autoApprovePayment;
+            await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+            return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
+        }
+    }
+
+    if (method === "GET" && isAuth) {
+        const receipts = sysConfig.tgReceipts || [];
+        return new Response(JSON.stringify({ success: true, receipts, gateway: { zarinpal: !!sysConfig.zarinpalMerchant, crypto: !!sysConfig.cryptoWallet } }), { headers: { "Content-Type": "application/json" } });
+    }
+
+    return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+}
+
+async function activatePackageForUser(env, userId, packageId) {
+    const pkg = (sysConfig.tgPackages || []).find(p => p.id === packageId);
+    const user = (sysConfig.users || []).find(u => u.id === userId);
+    if (!pkg || !user) return;
+    const base = (user.expiryMs && user.expiryMs > Date.now()) ? user.expiryMs : Date.now();
+    user.expiryMs = base + pkg.days * 86400000;
+    user.limitTotalReq = pkg.gb ? Math.floor(pkg.gb * 6000) : null;
+    user.isPaused = false;
+    // Track purchase count for loyalty
+    user.purchaseCount = (user.purchaseCount || 0) + 1;
+    if (user.purchaseCount >= sysConfig.loyaltyThreshold) {
+        user.expiryMs += sysConfig.loyaltyRewardDays * 86400000;
+        user.purchaseCount = 0;
+    }
+}
+
+async function chargeUserWallet(env, userId, amount) {
+    const linked = Object.values(sysConfig.tgLinkedUsers || {}).find(l => l.userId === userId);
+    if (linked) {
+        linked.wallet = (linked.wallet || 0) + amount;
+    }
+}
+
+async function applyCashback(env, userId, amount) {
+    const percent = sysConfig.cashbackPercent || 0;
+    if (percent <= 0) return;
+    const cashback = Math.floor(amount * percent / 100);
+    await chargeUserWallet(env, userId, cashback);
+}
+
+// ════════════════════════════════════════════════════════════
+//  REVENUE & FRAUD DETECTION API
+// ════════════════════════════════════════════════════════════
+async function handleRevenueApi(request, env, ctx) {
+    const url = new URL(request.url);
+    const authHeader = request.headers.get("Authorization") || "";
+    const authKey = authHeader.replace("Bearer ", "") || url.searchParams.get("key") || "";
+    if (!constantTimeEqual(authKey, sysConfig.masterKey) && !isPanelApiKey(authKey)) {
+        return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    }
+    const receipts = (sysConfig.tgReceipts || []).filter(r => r.status === "approved");
+    const now = Date.now();
+    const day = 86400000;
+    const calc = (ms) => receipts.filter(r => r.approvedAt && (now - r.approvedAt) < ms);
+    const sum = (arr) => arr.reduce((s, r) => s + (r.amount || 0), 0);
+    const users = sysConfig.users || [];
+    const active = users.filter(u => !u.isPaused && (!u.expiryMs || u.expiryMs > now)).length;
+    const expSoon = users.filter(u => u.expiryMs && u.expiryMs > now && u.expiryMs < now + 3*day).length;
+    return new Response(JSON.stringify({
+        success: true,
+        revenue: { today: sum(calc(day)), week: sum(calc(7*day)), month: sum(calc(30*day)), total: sum(receipts) },
+        transactions: { today: calc(day).length, week: calc(7*day).length, month: calc(30*day).length, total: receipts.length },
+        users: { total: users.length, active, expSoon, paused: users.filter(u => u.isPaused).length },
+        packages: (sysConfig.tgPackages || []).length,
+        pending: (sysConfig.tgReceipts || []).filter(r => r.status === "pending").length
+    }), { headers: { "Content-Type": "application/json" } });
+}
+
+async function handleFraudApi(request, env, ctx) {
+    const url = new URL(request.url);
+    const authHeader = request.headers.get("Authorization") || "";
+    const authKey = authHeader.replace("Bearer ", "") || url.searchParams.get("key") || "";
+    if (!constantTimeEqual(authKey, sysConfig.masterKey) && !isPanelApiKey(authKey)) {
+        return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    }
+    // Detect suspicious patterns
+    const users = sysConfig.users || [];
+    const linked = sysConfig.tgLinkedUsers || {};
+    const ipMap = {};
+    const alerts = [];
+    // Check for multiple accounts per TG user
+    const tgUserMap = {};
+    Object.entries(linked).forEach(([tgId, l]) => {
+        if (l.userId) {
+            tgUserMap[l.userId] = (tgUserMap[l.userId] || 0) + 1;
+        }
+    });
+    // Check for users with same proxy IP
+    users.forEach(u => {
+        if (u.proxyIp) {
+            ipMap[u.proxyIp] = (ipMap[u.proxyIp] || []).concat(u.name);
+        }
+    });
+    Object.entries(ipMap).forEach(([ip, names]) => {
+        if (names.length > sysConfig.fraudMaxAccountsPerIp) {
+            alerts.push({ type: "shared_ip", ip, users: names, severity: "high" });
+        }
+    });
+    // Check for unusual usage
+    const usage = sysUsageCache?.users || {};
+    Object.entries(usage).forEach(([id, u]) => {
+        if (u.reqs > 50000) { // >8GB in one period
+            alerts.push({ type: "high_usage", userId: id, reqs: u.reqs, severity: "medium" });
+        }
+    });
+    return new Response(JSON.stringify({ success: true, alerts, totalUsers: users.length, checkedAt: Date.now() }), { headers: { "Content-Type": "application/json" } });
+}
+
+// ════════════════════════════════════════════════════════════
+//  AUTO-RENEWAL & LIFECYCLE ENGINE
+// ════════════════════════════════════════════════════════════
+async function runLifecycleCheck(env, ctx) {
+    if (!sysConfig.autoRenewEnabled) return;
+    const now = Date.now();
+    const day = 86400000;
+    const users = sysConfig.users || [];
+    const linked = sysConfig.tgLinkedUsers || {};
+    const tgApi = sysConfig.tgToken ? `https://api.telegram.org/bot${sysConfig.tgToken}` : null;
+    if (!tgApi) return;
+
+    for (const u of users) {
+        if (!u.expiryMs || u.isPaused) continue;
+        const daysLeft = Math.ceil((u.expiryMs - now) / day);
+        const linkedUser = Object.entries(linked).find(([k, v]) => v.userId === u.id);
+        if (!linkedUser) continue;
+        const tgId = linkedUser[0];
+
+        // Send reminders
+        if (sysConfig.renewReminderDays.includes(daysLeft)) {
+            const msg = `⚠️ *یادآوری انقضا*\n\nسرویس *${u.name}* تا *${daysLeft} روز* دیگر منقضی می‌شود.\n\nبرای تمدید از منوی خرید استفاده کنید.`;
+            try {
+                await fetch(`${tgApi}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: tgId, text: msg, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "🛒 تمدید", callback_data: "u:buy" }, { text: "📊 سرویس‌ها", callback_data: "u:services:0" }]] } }),
+                    signal: AbortSignal.timeout(8000)
+                });
+            } catch (e) {}
+        }
+
+        // Auto-disable after grace period
+        if (daysLeft < -(sysConfig.gracePeriodDays || 3) && !u.isPaused) {
+            u.isPaused = true;
+            u.disabledReason = "expired_auto";
+            try {
+                await fetch(`${tgApi}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: tgId, text: `🔴 سرویس *${u.name}* به دلیل انقضا غیرفعال شد.\nبرای فعال‌سازی مجدد، تمدید کنید.`, parse_mode: "Markdown" }),
+                    signal: AbortSignal.timeout(8000)
+                });
+            } catch (e) {}
+        }
+    }
+    await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+}
+
+// ════════════════════════════════════════════════════════════
+//  CAMPAIGN SYSTEM
+// ════════════════════════════════════════════════════════════
+async function handleCampaignApi(request, env, ctx) {
+    const url = new URL(request.url);
+    const method = request.method;
+    const authHeader = request.headers.get("Authorization") || "";
+    const authKey = authHeader.replace("Bearer ", "") || url.searchParams.get("key") || "";
+    const isAuth = constantTimeEqual(authKey, sysConfig.masterKey) || isPanelApiKey(authKey);
+
+    if (method === "POST" && isAuth) {
+        const body = await request.json();
+        if (body.action === "start") {
+            sysConfig.campaignActive = true;
+            sysConfig.campaignDiscount = body.discount || 20;
+            sysConfig.campaignEndMs = Date.now() + (body.hours || 24) * 3600000;
+            sysConfig.campaignName = body.name || "تخفیف ویژه";
+            await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+            return new Response(JSON.stringify({ success: true, campaign: { name: sysConfig.campaignName, discount: sysConfig.campaignDiscount, endsAt: sysConfig.campaignEndMs } }), { headers: { "Content-Type": "application/json" } });
+        }
+        if (body.action === "stop") {
+            sysConfig.campaignActive = false;
+            await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+            return new Response(JSON.stringify({ success: true }), { headers: { "Content-Type": "application/json" } });
+        }
+    }
+    if (method === "GET") {
+        const active = sysConfig.campaignActive && sysConfig.campaignEndMs > Date.now();
+        return new Response(JSON.stringify({ success: true, active, name: sysConfig.campaignName, discount: sysConfig.campaignDiscount, endsAt: sysConfig.campaignEndMs, remainingMs: active ? sysConfig.campaignEndMs - Date.now() : 0 }), { headers: { "Content-Type": "application/json" } });
+    }
+    return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+}
+
+// ════════════════════════════════════════════════════════════
+//  GIFT CARD SYSTEM
+// ════════════════════════════════════════════════════════════
+async function generateGiftCard(env, days, gb, note) {
+    const code = "PNH-" + crypto.randomUUID().split("-")[0].toUpperCase();
+    const card = { code, days, gb, note: note || "", used: false, createdAt: Date.now() };
+    sysConfig.giftCards = sysConfig.giftCards || [];
+    sysConfig.giftCards.push(card);
+    await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+    return card;
+}
+
+async function redeemGiftCard(env, code, userId) {
+    const card = (sysConfig.giftCards || []).find(c => c.code === code && !c.used);
+    if (!card) return null;
+    card.used = true;
+    card.usedBy = userId;
+    card.usedAt = Date.now();
+    const user = (sysConfig.users || []).find(u => u.id === userId);
+    if (user) {
+        const base = (user.expiryMs && user.expiryMs > Date.now()) ? user.expiryMs : Date.now();
+        user.expiryMs = base + card.days * 86400000;
+        if (card.gb) user.limitTotalReq = Math.floor(card.gb * 6000);
+        user.isPaused = false;
+    }
+    await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+    return card;
+}
+
+// ════════════════════════════════════════════════════════════
+//  SPEED TEST & SERVER STATUS (for bot)
+// ════════════════════════════════════════════════════════════
+async function runSpeedTest(hostName) {
+    const results = [];
+    const testUrls = [
+        { name: "Cloudflare", url: "https://speed.cloudflare.com/__down?bytes=1000000" },
+        { name: "Main", url: `https://${hostName}/health` }
+    ];
+    for (const t of testUrls) {
+        try {
+            const start = Date.now();
+            const res = await fetch(t.url, { signal: AbortSignal.timeout(5000) });
+            const latency = Date.now() - start;
+            results.push({ name: t.name, latency, status: res.ok ? "online" : "degraded" });
+        } catch (e) {
+            results.push({ name: t.name, latency: -1, status: "offline" });
+        }
+    }
+    return results;
+}
+
+
 /* ════════════════════════════════════════════════════════════
  *  END  TELEGRAM USER-BOT LAYER
  * ════════════════════════════════════════════════════════════ */
@@ -7743,7 +8207,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
         const cb0 = (update.callback_query && update.callback_query.data) || "";
         const st0 = (sysConfig.tgUserState || {})[String(callerId || "")] || {};
         const forceUser = cb0.startsWith("u:")
-            || /^\/(start|user|u|help|lang|cancel|services|wallet|support|buy|charge)\b/i.test(txt0)
+            || /^\/(start|user|u|help|lang|cancel|services|wallet|support|buy|charge|test|status|gift|usage)\b/i.test(txt0)
             || !!(um && (um.photo || um.document))
             || !!(st0 && st0.awaiting);
 
