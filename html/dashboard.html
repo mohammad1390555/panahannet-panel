@@ -165,11 +165,59 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
           #view-add-user select, #view-edit-user select,
           #view-add-user textarea, #view-edit-user textarea {
               max-width: 100%; min-height: 44px; box-sizing: border-box;
+              font-size: 16px; /* prevents iOS zoom on focus */
           }
           #view-add-user label, #view-edit-user label { word-break: break-word; }
+          #view-add-user .overflow-y-auto, #view-edit-user .overflow-y-auto {
+              -webkit-overflow-scrolling: touch;
+              overscroll-behavior: contain;
+          }
           @media (max-width: 640px) {
               #view-add-user .grid, #view-edit-user .grid { grid-template-columns: 1fr !important; }
               #tbl-users { grid-template-columns: 1fr !important; }
+              #view-add-user, #view-edit-user {
+                  position: fixed;
+                  inset: 0;
+                  z-index: 50;
+                  background: var(--rz-bg, #0B1220);
+                  padding: 0;
+                  border-radius: 0;
+              }
+              html:not(.dark) #view-add-user, html:not(.dark) #view-edit-user {
+                  background: #f8fafc;
+              }
+              #view-add-user > div, #view-edit-user > div {
+                  border-radius: 0 !important;
+                  border: none !important;
+                  height: 100%;
+              }
+              #view-add-user .overflow-y-auto, #view-edit-user .overflow-y-auto {
+                  padding: 1rem !important;
+              }
+              #view-add-user h4, #view-edit-user h4 {
+                  font-size: 0.7rem;
+              }
+              #view-add-user .space-y-3 > div, #view-edit-user .space-y-3 > div {
+                  margin-bottom: 0.25rem;
+              }
+              /* Make checkboxes wrap nicely */
+              #add-user-clean-ips-wrap, #add-user-proxy-ips-wrap,
+              #add-user-nodes-wrap, #add-user-ports-wrap,
+              #edit-user-clean-ips-wrap, #edit-user-proxy-ips-wrap,
+              #edit-user-nodes-wrap, #edit-user-ports-wrap {
+                  gap: 0.5rem !important;
+              }
+              #add-user-mode-wrap, #edit-user-mode-wrap {
+                  flex-direction: column;
+                  gap: 0.5rem !important;
+              }
+          }
+          @media (max-width: 380px) {
+              #view-add-user input, #view-edit-user input,
+              #view-add-user textarea, #view-edit-user textarea {
+                  padding: 0.625rem 0.75rem !important;
+                  font-size: 14px;
+              }
           }
 
           :root {
@@ -1697,7 +1745,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                            <option value="paused" data-i18n="filter_paused">Paused</option>
                                            <option value="auto-disabled" data-i18n="filter_auto_disabled">Auto-Disabled</option>
                                        </select>
-                                       <input type="text" id="user-search-input" oninput="debouncedRenderUsers()" placeholder="Find by Name or UUID..." data-i18n="user_search_placeholder" class="bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-3 py-2.5 rounded-xl text-xs outline-none font-sans text-slate-600 dark:text-slate-400 focus:border-primary">
+                                       <input type="text" id="user-search-input" oninput="debouncedRenderUsers()" placeholder="Find by Name or UUID..." data-i18n="user_search_placeholder" class="w-full md:w-auto bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-3 py-2.5 rounded-xl text-xs outline-none font-sans text-slate-600 dark:text-slate-400 focus:border-primary">
                                        <select id="user-sort" onchange="renderUsersTable()" class="bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-3 py-2.5 rounded-xl text-xs outline-none font-sans text-slate-600 dark:text-slate-400 focus:border-primary">
                                            <option value="created_desc" data-i18n="sort_newest">Newest first</option>
                                            <option value="created_asc" data-i18n="sort_oldest">Oldest first</option>
@@ -1711,7 +1759,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                    </div>
                                </div>
                               <!-- N2 (feature #6) — Batch operations toolbar. Appears only when at least one user is selected. -->
-                              <div id="batch-toolbar" class="hidden mb-3 p-3 bg-primary/10 border border-primary/30 rounded-xl flex flex-wrap items-center gap-2">
+                              <div id="batch-toolbar" class="hidden mb-3 p-2.5 md:p-3 bg-primary/10 border border-primary/30 rounded-xl flex flex-wrap items-center gap-1.5 md:gap-2">
                                   <span class="text-sm font-bold text-primary"><span id="batch-count">0</span> <span data-i18n="batch_selected">selected</span></span>
                                   <div class="flex-1"></div>
                                   <button onclick="batchAction('pause')" class="native-press px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg" data-i18n="batch_pause">⏸ Pause</button>
@@ -1723,7 +1771,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                   <button onclick="clearBatchSelection()" class="native-press px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-lg" data-i18n="batch_clear">✕ Clear</button>
                               </div>
                               <div class="overflow-x-auto">
-                                  <div id="tbl-users" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"xl:grid-cols-3 gap-3">
+                                  <div id="tbl-users" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3">
                                   </div>
                               </div>
                               <!-- Pagination (Stage 4) -->
@@ -1835,9 +1883,9 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                                        </div>
                                    </div>
                                </div>
-                               <div class="px-5 py-4 border-t border-slate-200 dark:border-darkborder bg-white dark:bg-darkcard flex justify-between items-center shrink-0">
-                                   <button onclick="closeAddUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
-                                   <button onclick="commitAddUser()" class="native-press w-full px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" style="position:sticky;bottom:0" data-i18n="save_btn_user">Save User</button>
+                               <div class="px-4 py-3 md:px-5 md:py-4 border-t border-slate-200 dark:border-darkborder bg-white dark:bg-darkcard flex gap-3 items-center shrink-0" style="padding-bottom:calc(0.75rem + env(safe-area-inset-bottom, 0px));">
+                                   <button onclick="closeAddUserPage()" class="shrink-0 px-4 py-2.5 md:px-5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
+                                   <button onclick="commitAddUser()" class="native-press flex-1 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" data-i18n="save_btn_user">Save User</button>
                                </div>
                            </div>
                        </div>
@@ -5131,7 +5179,10 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
               var sc = __q('.scroll-content');
               sc.style.overflow = 'hidden';
               sc.classList.add('flex', 'flex-col');
-              sc.firstElementChild.classList.add('flex-1', 'min-h-0', 'flex', 'flex-col');
+              if (sc.firstElementChild) sc.firstElementChild.classList.add('flex-1', 'min-h-0', 'flex', 'flex-col');
+              // Mobile: scroll to top of form
+              var formScroll = __q('#view-add-user .overflow-y-auto');
+              if (formScroll) formScroll.scrollTop = 0;
               updateTitleText('Add User');
               buildPortCheckboxes('add-user-ports-wrap', null);
               buildModeCheckboxes('add-user-mode-wrap', null);
@@ -5145,7 +5196,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
               var sc = __q('.scroll-content');
               sc.style.overflow = '';
               sc.classList.remove('flex', 'flex-col');
-              sc.firstElementChild.classList.remove('flex-1', 'min-h-0', 'flex', 'flex-col');
+              if (sc.firstElementChild) sc.firstElementChild.classList.remove('flex-1', 'min-h-0', 'flex', 'flex-col');
               updateTitle();
           }
           function closeEditUserPage() {
