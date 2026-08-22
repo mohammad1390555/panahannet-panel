@@ -5860,10 +5860,11 @@ function tgMainMenu(lang, linked) {
         [{ text: tgT(lang, "main_buy"), callback_data: "u:buy" }, { text: tgT(lang, "main_services"), callback_data: "u:services:0" }],
         [{ text: tgT(lang, "main_wallet"), callback_data: "u:wallet" }, { text: tgT(lang, "main_referral"), callback_data: "u:ref" }],
         [{ text: tgT(lang, "main_trial"), callback_data: "u:trial" }, { text: tgT(lang, "main_account"), callback_data: "u:account" }],
-        [{ text: tgT(lang, "main_support"), callback_data: "u:support" }, { text: tgT(lang, "main_lang"), callback_data: "u:lang" }]
+        [{ text: "📊 مصرف من", callback_data: "u:usage" }, { text: tgT(lang, "main_support"), callback_data: "u:support" }],
+        [{ text: tgT(lang, "main_lang"), callback_data: "u:lang" }]
     ];
     if (linked && isTgAdmin(linked.tgUserId)) {
-        rows.push([{ text: "🛡 Admin", callback_data: "u:adminhome" }]);
+        rows.push([{ text: "🛡 پنل مدیریت", callback_data: "u:adminhome" }]);
     }
     return rows;
 }
@@ -6478,6 +6479,73 @@ async function tgHandleStatefulMessage(env, lang, chatId, tgUserId, linked, stat
         await tgApiCall("sendMessage", { chat_id: chatId, text: lang === "fa" ? "ارسال شد." : "Sent.", parse_mode: "Markdown" });
         return true;
     }
+    if (state.awaiting === "admin_new_user_name") {
+        tgClearState(tgUserId);
+        await tgPersist(env);
+        const name = (text || "").trim();
+        if (!name) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ نام نامعتبر.", parse_mode: "Markdown" }); return true; }
+        const newId = crypto.randomUUID();
+        const newUser = { id: newId, name: name, gb: 0, days: 0, startedAt: Date.now(), expiryMs: 0, isPaused: false };
+        sysConfig.users = sysConfig.users || [];
+        sysConfig.users.push(newUser);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("sendMessage", { chat_id: chatId, text: `✅ کاربر *${name}* ساخته شد.\n🆔 \`${newId}\`\n\nبرای تنظیم حجم و مدت، از پنل وب یا بخش ویرایش استفاده کنید.`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "👥 کاربران", callback_data: "u:adminusers:0" }, { text: "🛡 Admin", callback_data: "u:adminhome" }]] } });
+        return true;
+    }
+    if (state.awaiting === "admin_pkg_name") {
+        tgSetState(tgUserId, { awaiting: "admin_pkg_gb", pkgName: (text || "").trim() });
+        await tgPersist(env);
+        await tgApiCall("sendMessage", { chat_id: chatId, text: "📦 حجم پکیج (GB) را بفرستید:\n(مثال: 10)", parse_mode: "Markdown" });
+        return true;
+    }
+    if (state.awaiting === "admin_pkg_gb") {
+        const gb = parseFloat(text);
+        if (isNaN(gb) || gb <= 0) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ عدد نامعتبر.", parse_mode: "Markdown" }); return true; }
+        tgSetState(tgUserId, { awaiting: "admin_pkg_days", pkgName: state.pkgName, pkgGb: gb });
+        await tgPersist(env);
+        await tgApiCall("sendMessage", { chat_id: chatId, text: "📅 مدت پکیج (روز) را بفرستید:\n(مثال: 30)", parse_mode: "Markdown" });
+        return true;
+    }
+    if (state.awaiting === "admin_pkg_days") {
+        const days = parseInt(text);
+        if (isNaN(days) || days <= 0) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ عدد نامعتبر.", parse_mode: "Markdown" }); return true; }
+        tgSetState(tgUserId, { awaiting: "admin_pkg_price", pkgName: state.pkgName, pkgGb: state.pkgGb, pkgDays: days });
+        await tgPersist(env);
+        await tgApiCall("sendMessage", { chat_id: chatId, text: "💰 قیمت (تومان) را بفرستید:\n(مثال: 50000)", parse_mode: "Markdown" });
+        return true;
+    }
+    if (state.awaiting === "admin_pkg_price") {
+        const price = parseInt(text);
+        if (isNaN(price) || price < 0) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ عدد نامعتبر.", parse_mode: "Markdown" }); return true; }
+        tgClearState(tgUserId);
+        await tgPersist(env);
+        const pkg = { id: crypto.randomUUID(), name: state.pkgName, gb: state.pkgGb, days: state.pkgDays, priceIrt: price, description: "", active: true };
+        sysConfig.tgPackages = sysConfig.tgPackages || [];
+        sysConfig.tgPackages.push(pkg);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("sendMessage", { chat_id: chatId, text: `✅ پکیج *${pkg.name}* ساخته شد.\n💾 ${pkg.gb}GB · 📅 ${pkg.days} روز · 💰 ${pkg.priceIrt.toLocaleString()} تومان`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "📦 پکیج‌ها", callback_data: "u:adminpkgs" }, { text: "🛡 Admin", callback_data: "u:adminhome" }]] } });
+        return true;
+    }
+    if (state.awaiting === "admin_promo_code") {
+        const code = (text || "").trim().toUpperCase();
+        if (!code) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ کد نامعتبر.", parse_mode: "Markdown" }); return true; }
+        tgSetState(tgUserId, { awaiting: "admin_promo_type", promoCode: code });
+        await tgPersist(env);
+        await tgApiCall("sendMessage", { chat_id: chatId, text: "نوع تخفیف؟", parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "درصدی %", callback_data: "u:promotype:percent" }, { text: "مبلغ ثابت", callback_data: "u:promotype:fixed" }]] } });
+        return true;
+    }
+    if (state.awaiting === "admin_promo_value") {
+        const value = parseFloat(text);
+        if (isNaN(value) || value <= 0) { await tgApiCall("sendMessage", { chat_id: chatId, text: "❌ عدد نامعتبر.", parse_mode: "Markdown" }); return true; }
+        tgClearState(tgUserId);
+        await tgPersist(env);
+        const promo = { id: crypto.randomUUID(), code: state.promoCode, type: state.promoType || "percent", value: value, usageLimit: null, usedCount: 0, active: true };
+        sysConfig.tgPromos = sysConfig.tgPromos || [];
+        sysConfig.tgPromos.push(promo);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("sendMessage", { chat_id: chatId, text: `✅ کد تخفیف *${promo.code}* ساخته شد.\nنوع: ${promo.type === "percent" ? promo.value + "%" : promo.value.toLocaleString() + " تومان"}`, parse_mode: "Markdown", reply_markup: { inline_keyboard: [[{ text: "🎟 کدها", callback_data: "u:adminpromos" }, { text: "🛡 Admin", callback_data: "u:adminhome" }]] } });
+        return true;
+    }
     if (state.awaiting === "admin_search") {
         tgClearState(tgUserId);
         await tgPersist(env);
@@ -7088,12 +7156,21 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
     // ── Admin home (multi-admin) ──
     if (action === "adminhome") {
         if (!isTgAdmin(tgUserId)) return true;
-        await tgSendOrEdit(chatId, messageId, "🛡 *Admin*", [
-            [{ text: "👥 Users", callback_data: "u:adminusers:0" }, { text: "📊 Stats", callback_data: "u:adminstats" }],
-            [{ text: "🧾 Receipts", callback_data: "u:adminrcpt" }, { text: "🚫 Disabled", callback_data: "u:admindisabled" }],
-            [{ text: "🔍 Search", callback_data: "u:adminsearch" }, { text: "📢 Broadcast", callback_data: "u:adminbc" }],
-            [{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]
-        ]);
+        const users = sysConfig.users || [];
+        const now = Date.now();
+        const active = users.filter(u => !u.isPaused && (!u.expiryMs || u.expiryMs > now)).length;
+        const expSoon = users.filter(u => u.expiryMs && u.expiryMs > now && u.expiryMs < now + 3*86400000).length;
+        await tgSendOrEdit(chatId, messageId,
+            `🛡 *پنل مدیریت ${PANEL_BRAND}*\n\n👥 کاربران: *${users.length}* (فعال: ${active})\n⚠️ انقضا نزدیک: *${expSoon}*\n🛒 فروشگاه: *${(sysConfig.tgPackages||[]).length}* پکیج\n💰 کیف‌پول کاربران: فعال`,
+            [
+                [{ text: "👥 مدیریت کاربران", callback_data: "u:adminusers:0" }, { text: "➕ کاربر جدید", callback_data: "u:adminadduser" }],
+                [{ text: "📦 پکیج‌ها", callback_data: "u:adminpkgs" }, { text: "📊 آمار و گزارش", callback_data: "u:adminstats" }],
+                [{ text: "💰 فروش و مالی", callback_data: "u:adminsales" }, { text: "🧾 رسیدها", callback_data: "u:adminrcpt" }],
+                [{ text: "🎟 کد تخفیف", callback_data: "u:adminpromos" }, { text: "📢 اطلاع‌رسانی", callback_data: "u:adminbc" }],
+                [{ text: "🔍 جستجو", callback_data: "u:adminsearch" }, { text: "🚫 غیرفعال‌ها", callback_data: "u:admindisabled" }],
+                [{ text: "⚙️ تنظیمات ربات", callback_data: "u:adminsettings" }, { text: "📋 لاگ فعالیت", callback_data: "u:adminlogs" }],
+                [{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]
+            ]);
         return true;
     }
     if (action === "adminstats") {
@@ -7228,6 +7305,302 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
 
     return false;
 }
+
+
+    // ═══ NEW: Add User Flow ═══
+    if (action === "adminadduser") {
+        if (!isTgAdmin(tgUserId)) return true;
+        tgSetState(tgUserId, { awaiting: "admin_new_user_name" });
+        await tgPersist(env);
+        await tgSendOrEdit(chatId, messageId,
+            "➕ *ساخت کاربر جدید*\n\nنام/شناسه کاربر را بفرستید:\n(مثال: ali_test)",
+            [[{ text: "❌ انصراف", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Package Management ═══
+    if (action === "adminpkgs") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const pkgs = sysConfig.tgPackages || [];
+        let text = "📦 *پکیج‌های فروش*\n\n";
+        if (!pkgs.length) text += "هیچ پکیجی تعریف نشده.";
+        else pkgs.forEach((p, i) => {
+            text += `${p.active !== false ? "🟢" : "🔴"} *${p.name}*\n   💾 ${p.gb}GB · 📅 ${p.days} روز · 💰 ${(p.priceIrt||0).toLocaleString()} تومان\n`;
+        });
+        const kb = pkgs.map((p, i) => [{ text: `${p.active !== false ? "🟢" : "🔴"} ${p.name}`, callback_data: `u:adminpkgedit:${p.id}` }]);
+        kb.push([{ text: "➕ پکیج جدید", callback_data: "u:adminpkgadd" }]);
+        kb.push([{ text: "🛡 بازگشت", callback_data: "u:adminhome" }]);
+        await tgSendOrEdit(chatId, messageId, text, kb);
+        return true;
+    }
+    if (action === "adminpkgadd") {
+        if (!isTgAdmin(tgUserId)) return true;
+        tgSetState(tgUserId, { awaiting: "admin_pkg_name" });
+        await tgPersist(env);
+        await tgSendOrEdit(chatId, messageId,
+            "➕ *پکیج جدید*\n\nنام پکیج را بفرستید:\n(مثال: ۱۰ گیگ ماهانه)",
+            [[{ text: "❌ انصراف", callback_data: "u:adminpkgs" }]]);
+        return true;
+    }
+    if (action.startsWith("adminpkgedit:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const pkgId = action.split(":")[1];
+        const pkg = (sysConfig.tgPackages || []).find(p => p.id === pkgId);
+        if (!pkg) { await tgSendOrEdit(chatId, messageId, "❌ پکیج یافت نشد", [[{ text: "🛡 بازگشت", callback_data: "u:adminpkgs" }]]); return true; }
+        await tgSendOrEdit(chatId, messageId,
+            `📦 *${pkg.name}*\n\n💾 حجم: ${pkg.gb} GB\n📅 مدت: ${pkg.days} روز\n💰 قیمت: ${(pkg.priceIrt||0).toLocaleString()} تومان\n📝 توضیح: ${pkg.description || "-"}\nوضعیت: ${pkg.active !== false ? "🟢 فعال" : "🔴 غیرفعال"}`,
+            [
+                [{ text: pkg.active !== false ? "🔴 غیرفعال کن" : "🟢 فعال کن", callback_data: `u:adminpkgtoggle:${pkg.id}` }],
+                [{ text: "🗑 حذف پکیج", callback_data: `u:adminpkgdel:${pkg.id}` }],
+                [{ text: "🛡 بازگشت", callback_data: "u:adminpkgs" }]
+            ]);
+        return true;
+    }
+    if (action.startsWith("adminpkgtoggle:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const pkgId = action.split(":")[1];
+        const pkg = (sysConfig.tgPackages || []).find(p => p.id === pkgId);
+        if (pkg) { pkg.active = !(pkg.active !== false); await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig)); }
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: pkg ? (pkg.active ? "فعال شد" : "غیرفعال شد") : "خطا" });
+        // Refresh
+        const pkgs = sysConfig.tgPackages || [];
+        let text = "📦 *پکیج‌های فروش*\n\n";
+        pkgs.forEach(p => { text += `${p.active !== false ? "🟢" : "🔴"} *${p.name}* — ${p.gb}GB/${p.days}روز\n`; });
+        const kb = pkgs.map(p => [{ text: `${p.active !== false ? "🟢" : "🔴"} ${p.name}`, callback_data: `u:adminpkgedit:${p.id}` }]);
+        kb.push([{ text: "➕ پکیج جدید", callback_data: "u:adminpkgadd" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]);
+        await tgSendOrEdit(chatId, messageId, text, kb);
+        return true;
+    }
+    if (action.startsWith("adminpkgdel:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const pkgId = action.split(":")[1];
+        sysConfig.tgPackages = (sysConfig.tgPackages || []).filter(p => p.id !== pkgId);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: "حذف شد" });
+        await tgSendOrEdit(chatId, messageId, "🗑 پکیج حذف شد.", [[{ text: "📦 پکیج‌ها", callback_data: "u:adminpkgs" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Sales & Finance ═══
+    if (action === "adminsales") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const receipts = sysConfig.tgReceipts || [];
+        const now = Date.now();
+        const today = receipts.filter(r => r.approvedAt && (now - r.approvedAt) < 86400000);
+        const week = receipts.filter(r => r.approvedAt && (now - r.approvedAt) < 7*86400000);
+        const month = receipts.filter(r => r.approvedAt && (now - r.approvedAt) < 30*86400000);
+        const sum = arr => arr.reduce((s, r) => s + (r.amount || 0), 0);
+        const pending = receipts.filter(r => r.status === "pending");
+        await tgSendOrEdit(chatId, messageId,
+            `💰 *گزارش فروش*\n\n📅 امروز: *${sum(today).toLocaleString()}* تومان (${today.length} تراکنش)\n📆 هفته: *${sum(week).toLocaleString()}* تومان (${week.length})\n🗓 ماه: *${sum(month).toLocaleString()}* تومان (${month.length})\n\n⏳ در انتظار تایید: *${pending.length}*\n🧾 کل رسیدها: *${receipts.length}*`,
+            [
+                [{ text: "🧾 رسیدهای در انتظار", callback_data: "u:adminrcpt" }],
+                [{ text: "📊 آمار کامل", callback_data: "u:adminstats" }],
+                [{ text: "🛡 بازگشت", callback_data: "u:adminhome" }]
+            ]);
+        return true;
+    }
+
+    // ═══ NEW: Promo Code Management ═══
+    if (action === "adminpromos") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const promos = sysConfig.tgPromos || [];
+        let text = "🎟 *کدهای تخفیف*\n\n";
+        if (!promos.length) text += "هیچ کد تخفیفی تعریف نشده.";
+        else promos.forEach(p => {
+            const used = p.usedCount || 0;
+            const limit = p.usageLimit || "∞";
+            text += `${p.active !== false ? "🟢" : "🔴"} *${p.code}* — ${p.type === "percent" ? p.value + "%" : p.value.toLocaleString() + " تومان"} (${used}/${limit})\n`;
+        });
+        const kb = promos.map(p => [{ text: `${p.active !== false ? "🟢" : "🔴"} ${p.code}`, callback_data: `u:adminpromoedit:${p.id}` }]);
+        kb.push([{ text: "➕ کد جدید", callback_data: "u:adminpromoadd" }]);
+        kb.push([{ text: "🛡 بازگشت", callback_data: "u:adminhome" }]);
+        await tgSendOrEdit(chatId, messageId, text, kb);
+        return true;
+    }
+    if (action.startsWith("promotype:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const type = action.split(":")[1];
+        const st = (sysConfig.tgUserState || {})[String(tgUserId)] || {};
+        if (st.awaiting === "admin_promo_type") {
+            tgSetState(tgUserId, { awaiting: "admin_promo_value", promoCode: st.promoCode, promoType: type });
+            await tgPersist(env);
+            await tgApiCall("sendMessage", { chat_id: chatId, text: type === "percent" ? "چند درصد؟ (مثال: 20)" : "چند تومان؟ (مثال: 10000)", parse_mode: "Markdown" });
+        }
+        return true;
+    }
+    if (action === "adminpromoadd") {
+        if (!isTgAdmin(tgUserId)) return true;
+        tgSetState(tgUserId, { awaiting: "admin_promo_code" });
+        await tgPersist(env);
+        await tgSendOrEdit(chatId, messageId,
+            "➕ *کد تخفیف جدید*\n\nکد تخفیف را بفرستید:\n(مثال: OFF20)",
+            [[{ text: "❌ انصراف", callback_data: "u:adminpromos" }]]);
+        return true;
+    }
+    if (action.startsWith("adminpromoedit:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const promoId = action.split(":")[1];
+        const promo = (sysConfig.tgPromos || []).find(p => p.id === promoId);
+        if (!promo) { await tgSendOrEdit(chatId, messageId, "❌ یافت نشد", [[{ text: "🛡 بازگشت", callback_data: "u:adminpromos" }]]); return true; }
+        await tgSendOrEdit(chatId, messageId,
+            `🎟 *${promo.code}*\n\nنوع: ${promo.type === "percent" ? "درصدی" : "مبلغ ثابت"}\nمقدار: ${promo.type === "percent" ? promo.value + "%" : promo.value.toLocaleString() + " تومان"}\nاستفاده: ${promo.usedCount || 0}/${promo.usageLimit || "∞"}\nوضعیت: ${promo.active !== false ? "🟢 فعال" : "🔴 غیرفعال"}`,
+            [
+                [{ text: promo.active !== false ? "🔴 غیرفعال کن" : "🟢 فعال کن", callback_data: `u:adminpromotoggle:${promo.id}` }],
+                [{ text: "🗑 حذف", callback_data: `u:adminpromodel:${promo.id}` }],
+                [{ text: "🛡 بازگشت", callback_data: "u:adminpromos" }]
+            ]);
+        return true;
+    }
+    if (action.startsWith("adminpromotoggle:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const promoId = action.split(":")[1];
+        const promo = (sysConfig.tgPromos || []).find(p => p.id === promoId);
+        if (promo) { promo.active = !(promo.active !== false); await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig)); }
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: "انجام شد" });
+        await tgSendOrEdit(chatId, messageId, "✅ وضعیت بروزرسانی شد.", [[{ text: "🎟 کدها", callback_data: "u:adminpromos" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+    if (action.startsWith("adminpromodel:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const promoId = action.split(":")[1];
+        sysConfig.tgPromos = (sysConfig.tgPromos || []).filter(p => p.id !== promoId);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: "حذف شد" });
+        await tgSendOrEdit(chatId, messageId, "🗑 کد تخفیف حذف شد.", [[{ text: "🎟 کدها", callback_data: "u:adminpromos" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Bot Settings ═══
+    if (action === "adminsettings") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const botLang = sysConfig.tgBotLang || "fa";
+        const welcomeOn = sysConfig.tgWelcome !== false;
+        await tgSendOrEdit(chatId, messageId,
+            `⚙️ *تنظیمات ربات*\n\n🌐 زبان: *${botLang === "fa" ? "فارسی" : "English"}*\n👋 خوش‌آمد: *${welcomeOn ? "فعال" : "غیرفعال"}*\n🤖 نام ربات: @${PANEL_BOT_USER}\n🔖 نسخه: ${CURRENT_VERSION}`,
+            [
+                [{ text: "🌐 تغییر زبان", callback_data: "u:adminsetlang" }, { text: "👋 خوش‌آمد", callback_data: "u:adminsetwelcome" }],
+                [{ text: "🔗 تنظیم Webhook", callback_data: "u:adminsethook" }],
+                [{ text: "🛡 بازگشت", callback_data: "u:adminhome" }]
+            ]);
+        return true;
+    }
+    if (action === "adminsetlang") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const newLang = (sysConfig.tgBotLang || "fa") === "fa" ? "en" : "fa";
+        sysConfig.tgBotLang = newLang;
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: newLang === "fa" ? "فارسی شد" : "Switched to English" });
+        await tgSendOrEdit(chatId, messageId, `✅ زبان ربات: *${newLang === "fa" ? "فارسی 🇮🇷" : "English 🇬🇧"}*`, [[{ text: "⚙️ تنظیمات", callback_data: "u:adminsettings" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+    if (action === "adminsetwelcome") {
+        if (!isTgAdmin(tgUserId)) return true;
+        sysConfig.tgWelcome = !(sysConfig.tgWelcome !== false);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: sysConfig.tgWelcome ? "فعال شد" : "غیرفعال شد" });
+        await tgSendOrEdit(chatId, messageId, `✅ پیام خوش‌آمد: *${sysConfig.tgWelcome ? "فعال" : "غیرفعال"}*`, [[{ text: "⚙️ تنظیمات", callback_data: "u:adminsettings" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+    if (action === "adminsethook") {
+        if (!isTgAdmin(tgUserId)) return true;
+        const hookUrl = `https://${hostName}/${encodeURI(sysConfig.apiRoute)}/tg`;
+        const res = await tgApiCall("setWebhook", { url: hookUrl });
+        await tgSendOrEdit(chatId, messageId,
+            res?.ok ? `✅ Webhook تنظیم شد:\n\n${hookUrl}` : `❌ خطا در تنظیم webhook:\n${JSON.stringify(res?.description || "unknown")}`,
+            [[{ text: "⚙️ تنظیمات", callback_data: "u:adminsettings" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Activity Logs ═══
+    if (action === "adminlogs") {
+        if (!isTgAdmin(tgUserId)) return true;
+        let logs = [];
+        try {
+            const stored = await d1Get(env, "activity_log");
+            if (stored) logs = JSON.parse(stored);
+        } catch(e) {}
+        const recent = logs.slice(-10).reverse();
+        let text = "📋 *آخرین فعالیت‌ها*\n\n";
+        if (!recent.length) text += "لاگی ثبت نشده.";
+        else recent.forEach(l => {
+            const time = new Date(l.ts || Date.now()).toLocaleString("fa-IR", { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" });
+            text += `• ${l.type || "?"} — ${l.detail || ""} (${time})\n`;
+        });
+        await tgSendOrEdit(chatId, messageId, text, [[{ text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ ENHANCED: User Detail View ═══
+    if (action.startsWith("adminsvc:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const userId = action.split(":")[1];
+        const u = (sysConfig.users || []).find(x => x.id === userId);
+        if (!u) { await tgSendOrEdit(chatId, messageId, "❌ کاربر یافت نشد", [[{ text: "🛡 بازگشت", callback_data: "u:adminusers:0" }]]); return true; }
+        const now = Date.now();
+        const idClean = (u.id || "").replace(/-/g, "").toLowerCase();
+        const usage = (sysUsageCache && sysUsageCache.users && sysUsageCache.users[idClean]) || { reqs: 0, dReqs: 0 };
+        const usedGB = ((usage.reqs || 0) / 6000).toFixed(2);
+        const expiry = u.expiryMs ? new Date(u.expiryMs).toLocaleDateString("fa-IR") : "نامحدود";
+        const daysLeft = u.expiryMs ? Math.max(0, Math.ceil((u.expiryMs - now) / 86400000)) : "∞";
+        const linked = Object.entries(sysConfig.tgLinkedUsers || {}).find(([k, v]) => v.userId === u.id);
+        await tgSendOrEdit(chatId, messageId,
+            `👤 *${u.name}*\n\n🆔 UUID: \`${u.id}\`\n📊 مصرف: *${usedGB} GB*\n📅 انقضا: ${expiry} (${daysLeft} روز مانده)\n⏸ وضعیت: ${u.isPaused ? "متوقف" : "فعال"}\n🔗 تلگرام: ${linked ? linked[0] : "لینک نشده"}\n📡 محدودیت اتصال: ${u.connLimit || "نامحدود"}`,
+            [
+                [{ text: u.isPaused ? "▶️ فعال کن" : "⏸ متوقف کن", callback_data: `u:admintoggle:${u.id}` }],
+                [{ text: "📅 تمدید ۳۰ روز", callback_data: `u:adminextend:${u.id}:30` }, { text: "📅 تمدید ۷ روز", callback_data: `u:adminextend:${u.id}:7` }],
+                [{ text: "🔄 ریست ترافیک", callback_data: `u:adminreset:${u.id}` }],
+                [{ text: "🗑 حذف کاربر", callback_data: `u:admindelete:${u.id}` }],
+                [{ text: "👥 لیست کاربران", callback_data: "u:adminusers:0" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]
+            ]);
+        return true;
+    }
+
+    // ═══ NEW: Extend User ═══
+    if (action.startsWith("adminextend:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const parts = action.split(":");
+        const userId = parts[1];
+        const days = parseInt(parts[2]) || 30;
+        const u = (sysConfig.users || []).find(x => x.id === userId);
+        if (u) {
+            const base = (u.expiryMs && u.expiryMs > Date.now()) ? u.expiryMs : Date.now();
+            u.expiryMs = base + days * 86400000;
+            u.isPaused = false;
+            await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+            await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: `${days} روز تمدید شد ✅` });
+        }
+        await tgSendOrEdit(chatId, messageId, `✅ کاربر *${u?.name || "?"}* به مدت *${days} روز* تمدید شد.`, [[{ text: "👥 کاربران", callback_data: "u:adminusers:0" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Reset User Traffic ═══
+    if (action.startsWith("adminreset:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const userId = action.split(":")[1];
+        const idClean = userId.replace(/-/g, "").toLowerCase();
+        if (sysUsageCache && sysUsageCache.users && sysUsageCache.users[idClean]) {
+            sysUsageCache.users[idClean].reqs = 0;
+            sysUsageCache.users[idClean].dReqs = 0;
+        }
+        await cachedD1Put(env, "sys_usage", JSON.stringify(sysUsageCache));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: "ترافیک ریست شد ✅" });
+        await tgSendOrEdit(chatId, messageId, "✅ ترافیک کاربر ریست شد.", [[{ text: "👥 کاربران", callback_data: "u:adminusers:0" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
+    // ═══ NEW: Delete User ═══
+    if (action.startsWith("admindelete:")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const userId = action.split(":")[1];
+        const u = (sysConfig.users || []).find(x => x.id === userId);
+        sysConfig.users = (sysConfig.users || []).filter(x => x.id !== userId);
+        await cachedD1Put(env, "sys_config", JSON.stringify(sysConfig));
+        await tgApiCall("answerCallbackQuery", { callback_query_id: cbId, text: "حذف شد" });
+        await tgSendOrEdit(chatId, messageId, `🗑 کاربر *${u?.name || "?"}* حذف شد.`, [[{ text: "👥 کاربران", callback_data: "u:adminusers:0" }, { text: "🛡 بازگشت", callback_data: "u:adminhome" }]]);
+        return true;
+    }
+
 
 /**
  * Broadcast helper — sends a message to all linked Telegram users with
