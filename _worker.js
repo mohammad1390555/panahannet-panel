@@ -7311,7 +7311,7 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
                 [{ text: "🎟 کد تخفیف", callback_data: "u:adminpromos" }, { text: "📢 اطلاع‌رسانی", callback_data: "u:adminbc" }],
                 [{ text: "🔍 جستجو", callback_data: "u:adminsearch" }, { text: "🚫 غیرفعال‌ها", callback_data: "u:admindisabled" }],
                 [{ text: "⚙️ تنظیمات ربات", callback_data: "u:adminsettings" }, { text: "📋 لاگ فعالیت", callback_data: "u:adminlogs" }],
-                [{ text: tgT(lang, "main_menu"), callback_data: "u:home" }]
+                [{ text: "👤 پنل کاربری", callback_data: "user_panel" }],
             ]);
         return true;
     }
@@ -9161,6 +9161,14 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     safeWaitUntil(ctx, d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
                     await sendOrEdit(chatId, `☁️ **${t("tg_cf_settings")}**\n\n1️⃣ CF Account ID: \`${sysConfig.cfAccountId || '—'}\`\n\n${t("tg_new_val")}\n_send /skip to keep current_`, { inline_keyboard: [[{ text: "❌ " + t("btn_cancel"), callback_data: "tg_advanced_menu" }]] }, messageId);
                 }
+    } else if (data === "user_panel") {
+        tgClearState(tgUserId);
+        await tgPersist(env);
+        const menu = tgMainMenu(lang, linked);
+        const welcomeText = tgWelcomeText(lang, linked, linked.firstName || "") + `\n\n_v${CURRENT_VERSION}_`;
+        await tgSendOrEdit(chatId, messageId, welcomeText, menu);
+        return true;
+    }
                 
                 safeWaitUntil(ctx, fetch(`${tgApi}/answerCallbackQuery`, {
                     method: 'POST',
