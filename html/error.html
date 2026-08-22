@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="{{LANG}}" dir="{{DIR}}" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1220">
+<meta name="color-scheme" content="dark light">
+<title>{{BADGE}} · {{BRAND}}</title>
+<style>
+:root{--bg:#0B1220;--card:rgba(15,23,42,.58);--line:rgba(124,92,255,.28);--text:#F8FAFC;--muted:#94A3B8;--blue:#0052FF;--glow:#4D7CFF;--violet:#7C5CFF}
+html[data-theme="light"]{--bg:#F4F6FB;--card:rgba(255,255,255,.72);--line:rgba(0,82,255,.18);--text:#0B1220;--muted:#475569}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Vazirmatn,Tahoma,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;background:
+  radial-gradient(900px 520px at 12% -12%,rgba(0,82,255,.38),transparent 56%),
+  radial-gradient(720px 460px at 108% 108%,rgba(124,92,255,.28),transparent 52%),
+  linear-gradient(180deg,#070B16,#0B1220 42%,#0E1024)}
+html[data-theme="light"] .bg{background:
+  radial-gradient(900px 520px at 12% -12%,rgba(0,82,255,.18),transparent 56%),
+  radial-gradient(720px 460px at 108% 108%,rgba(124,92,255,.14),transparent 52%),
+  linear-gradient(180deg,#EEF2FF,#F8FAFC)}
+.orb{position:absolute;border-radius:50%;filter:blur(42px);opacity:.5;animation:float 16s ease-in-out infinite}
+.orb.a{width:240px;height:240px;background:#0052FF;top:6%;left:-50px}
+.orb.b{width:190px;height:190px;background:#7C5CFF;bottom:2%;right:-40px;animation-delay:-8s}
+.geo{position:absolute;border:1px solid rgba(77,124,255,.28);opacity:.35;animation:spin 28s linear infinite}
+.geo.r{width:90px;height:90px;border-radius:22px;top:18%;right:12%;transform:rotate(18deg)}
+.geo.t{width:0;height:0;border:18px solid transparent;border-bottom-color:rgba(124,92,255,.35);left:14%;bottom:16%;animation:float 11s ease-in-out infinite}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px);background-size:22px 22px;opacity:.32;animation:drift 42s linear infinite}
+html[data-theme="light"] .dots{background-image:radial-gradient(rgba(15,23,42,.08) 1px,transparent 1px)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+@keyframes drift{to{background-position:220px 220px}}
+@keyframes spin{to{transform:rotate(380deg)}}
+@keyframes in{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(77,124,255,.5)}70%{box-shadow:0 0 0 18px transparent}}
+@keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes shine{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.wrap{position:relative;z-index:1;width:min(460px,100%);animation:in .55s ease both}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.theme{min-height:40px;min-width:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;backdrop-filter:blur(12px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:26px 22px 20px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 24px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.04) inset}
+.hero{font-family:Calistoga,Georgia,serif;font-size:64px;line-height:1;text-align:center;background:linear-gradient(135deg,#4D7CFF,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.04em}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(0,82,255,.14);border:1px solid rgba(77,124,255,.32);color:#93B4FF;font-size:12px;font-weight:800}
+.icon{width:86px;height:86px;margin:10px auto 6px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(160deg,rgba(0,82,255,.38),rgba(124,92,255,.1));border:1px solid rgba(77,124,255,.38);color:#DCE7FF;animation:pulse 2.4s ease-out infinite}
+.icon svg{width:40px;height:40px;fill:currentColor;animation:breath 3.2s ease-in-out infinite}
+h1{font-family:Calistoga,Georgia,serif;font-size:clamp(26px,6vw,34px);line-height:1.2;text-align:center;margin:8px 0}
+.sub{text-align:center;color:var(--text);font-weight:700;font-size:15px;opacity:.92}
+.desc{text-align:center;color:var(--muted);font-size:13.5px;line-height:1.75;margin:10px 0 18px}
+.cd{text-align:center;color:#93B4FF;font-size:12px;font-weight:700;margin:-6px 0 14px;min-height:18px}
+.actions{display:flex;flex-direction:column;gap:10px}
+.btn{min-height:48px;border:0;border-radius:16px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;transition:transform .15s ease,filter .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{color:#fff;background:linear-gradient(135deg,#0052FF,#7C5CFF);box-shadow:0 10px 28px rgba(0,82,255,.35)}
+.btn.primary:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-120%);animation:shine 2.8s ease-in-out infinite}
+.btn.ghost{color:var(--text);background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.18)}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.foot{margin-top:14px;text-align:center;color:#64748B;font-size:11px}
+code{display:block;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(2,6,23,.5);color:#93B4FF;font-size:11px;word-break:break-all;text-align:start;direction:ltr}
+@media (max-width:380px){.row{grid-template-columns:1fr 1fr}.row .hide-xs{display:none}.hero{font-size:52px}}
+{{DESIGN_CSS}}
+.theme{min-height:44px;min-width:44px}
+.btn:focus-visible{outline:2px solid #4D7CFF;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.orb,.geo,.dots,.icon,.icon svg,.btn.primary:after{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="orb a"></div><div class="orb b"></div><div class="geo r"></div><div class="geo t"></div><div class="dots"></div></div>
+<main class="wrap">
+  <div class="topbar"><span class="badge">{{BADGE}}</span><button class="theme" type="button" id="themeBtn" aria-label="{{THEME}}">${ico("mix", 16)}</button></div>
+  <section class="card">
+    <div class="hero">{{CODE}}</div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">{{ICON}}</svg></div>
+    <h1>{{TITLE}}</h1>
+    <p class="sub">{{SUBTITLE}}</p>
+    <p class="desc">{{DESC}}</p>
+    <div class="actions">
+      <a class="btn primary" id="tgBtn" href="{{BOT_URL}}" target="_blank" rel="noopener">{{T_TELEGRAM}} · {{BOT_LABEL}}</a>
+      <a class="btn ghost" id="homeBtn" href="{{HOME}}">{{T_BUTTON}}</a>
+      <div class="row">
+        <button class="btn ghost" type="button" id="backBtn">{{T_BACK}}</button>
+        <button class="btn ghost" type="button" id="copyBtn">{{T_COPY}}</button>
+        <button class="btn ghost hide-xs" type="button" id="reportBtn">{{T_REPORT}}</button>
+      </div>
+    </div>
+    <code id="urlBox"></code>
+    <p class="foot">${t.footer} · v${CURRENT_VERSION}</p>
+  </section>
+</main>
+<script>
+(function(){
+  var root=document.documentElement;
+  function apply(th){ root.setAttribute("data-theme", th); try{ localStorage.setItem("RahgozarErrTheme", th);}catch(e){} }
+  var saved=null; try{ saved=localStorage.getItem("RahgozarErrTheme"); }catch(e){}
+  apply(saved || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+  document.getElementById("themeBtn").onclick=function(){ apply(root.getAttribute("data-theme")==="dark"?"light":"dark"); };
+  document.getElementById("urlBox").textContent=location.href;
+  document.getElementById("backBtn").onclick=function(){ if(history.length>1) history.back(); };
+  document.getElementById("copyBtn").onclick=function(){
+    var v=location.href,b=this,old=b.textContent;
+    function ok(){ b.textContent=${JSON.stringify(t.copied)}; setTimeout(function(){ b.textContent=old; },1500); }
+    if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(v).then(ok).catch(function(){});
+    else { var ta=document.createElement("textarea"); ta.value=v; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");ok();}catch(e){} ta.remove(); }
+  };
+  var rb=document.getElementById("reportBtn");
+  if(rb) rb.onclick=function(){ this.textContent="✓"; };
+})();
+</script>
+</body>
+</html>
