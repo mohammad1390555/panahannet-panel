@@ -3174,7 +3174,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
           }
 
           function checkVersionPopup() {
-              const popupKey = \`Manager_shown_v\{{VERSION}}\`;
+              const popupKey = `Manager_shown_v\{{VERSION}}`;
               if (!localStorage.getItem(popupKey)) {
                   setTimeout(() => {
                       const badge = __id('modal-version-badge');
@@ -3195,7 +3195,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                   m.classList.add('hidden');
                   m.classList.remove('flex');
               }
-              const popupKey = \`Manager_shown_v\{{VERSION}}\`;
+              const popupKey = `Manager_shown_v\{{VERSION}}`;
               localStorage.setItem(popupKey, 'true');
           }
   
@@ -3250,7 +3250,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                     let logsHtml = '';
                     data.logs.forEach(log => {
                         const dateStr = new Date(log.ts).toLocaleString('en-US', {hour12: false});
-                        logsHtml += \`<div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-darkborder/50 gap-2"><div><p class="text-sm font-bold text-slate-700 dark:text-slate-200">\${log.type}</p><p class="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs" title="\${log.detail}">\${log.detail}</p></div><span class="text-[10px] font-mono text-slate-400 bg-white dark:bg-darkcard px-2 py-1 rounded shrink-0">\${dateStr}</span></div>\`;
+                        logsHtml += `<div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-darkborder/50 gap-2"><div><p class="text-sm font-bold text-slate-700 dark:text-slate-200">${log.type}</p><p class="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs" title="${log.detail}">${log.detail}</p></div><span class="text-[10px] font-mono text-slate-400 bg-white dark:bg-darkcard px-2 py-1 rounded shrink-0">${dateStr}</span></div>`;
                     });
                     container.innerHTML = logsHtml;
                 } else {
@@ -4246,17 +4246,17 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                   list.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 italic">' + ((i18n[lang] || i18n['en']).no_nodes_advanced || 'No external nodes added yet.') + '</p>';
                   return;
               }
-              list.innerHTML = panels.map((p, i) => \`
+              list.innerHTML = panels.map((p, i) => `
                   <div class="flex items-center justify-between gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-darkborder/50">
                       <div class="min-w-0 flex-1">
-                          <p class="text-sm font-mono font-bold text-slate-700 dark:text-slate-200 truncate">\${p.url}</p>
-                          <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono truncate">\${p.apiKey.substring(0, 12)}...</p>
+                          <p class="text-sm font-mono font-bold text-slate-700 dark:text-slate-200 truncate">${p.url}</p>
+                          <p class="text-[11px] text-slate-400 dark:text-slate-500 font-mono truncate">${p.apiKey.substring(0, 12)}...</p>
                       </div>
-                      <button onclick="removeLinkedNode(\${i})" class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors shrink-0" title="Remove">
+                      <button onclick="removeLinkedNode(${i})" class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors shrink-0" title="Remove">
                           <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                       </button>
                   </div>
-              \`).join('');
+              `).join('');
           }
 
           function renderFakeConfigs(configs) {
@@ -4272,19 +4272,19 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
               configs.forEach((cfg, idx) => {
                   const item = document.createElement('div');
                   item.className = 'flex items-center gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-darkborder/50';
-                  item.innerHTML = \`
-                      <span class="rz-switch"><input type="checkbox" \${cfg.enabled ? 'checked' : ''} onchange="toggleFakeConfig(\${idx})"><span class="rz-track" aria-hidden="true"></span></span>
-                      <input type="text" value="\${cfg.name.replace(/"/g, '&quot;')}" onchange="updateFakeConfigName(\${idx}, this.value)" class="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-darkborder bg-white dark:bg-slate-900 focus:border-primary outline-none text-sm font-mono">
-                      <button onclick="moveFakeConfig(\${idx}, -1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors shrink-0" title="Move up">
+                  item.innerHTML = `
+                      <span class="rz-switch"><input type="checkbox" ${cfg.enabled ? 'checked' : ''} onchange="toggleFakeConfig(${idx})"><span class="rz-track" aria-hidden="true"></span></span>
+                      <input type="text" value="${cfg.name.replace(/"/g, '&quot;')}" onchange="updateFakeConfigName(${idx}, this.value)" class="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-darkborder bg-white dark:bg-slate-900 focus:border-primary outline-none text-sm font-mono">
+                      <button onclick="moveFakeConfig(${idx}, -1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors shrink-0" title="Move up">
                           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                       </button>
-                      <button onclick="moveFakeConfig(\${idx}, 1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors shrink-0" title="Move down">
+                      <button onclick="moveFakeConfig(${idx}, 1)" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors shrink-0" title="Move down">
                           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                       </button>
-                      <button onclick="removeFakeConfig(\${idx})" class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors shrink-0" title="Remove">
+                      <button onclick="removeFakeConfig(${idx})" class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors shrink-0" title="Remove">
                           <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                       </button>
-                  \`;
+                  `;
                   list.appendChild(item);
               });
               window._fakeConfigs = configs;
@@ -4414,7 +4414,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           if (wrap) wrap.classList.toggle('hidden', !conf.autoUpdate);
                       }
                       if (conf.autoUpdateFormat) {
-                          const radio = __q(\`input[name="auto-update-format"][value="\${conf.autoUpdateFormat}"]\`);
+                          const radio = __q(`input[name="auto-update-format"][value="${conf.autoUpdateFormat}"]`);
                           if (radio) radio.checked = true;
                       }
                       
@@ -4605,7 +4605,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                            if (wrap) wrap.classList.toggle('hidden', !conf.autoUpdate);
                        }
                        if (conf.autoUpdateFormat) {
-                           const radio = __q(\`input[name="auto-update-format"][value="\${conf.autoUpdateFormat}"]\`);
+                           const radio = __q(`input[name="auto-update-format"][value="${conf.autoUpdateFormat}"]`);
                            if (radio) radio.checked = true;
                        }
                       __setChecked("cfg-tfo", conf.enableOpt1 || false);
@@ -4678,7 +4678,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                               let use = data.usage[hash];
                               if(use) {
                                   let timeStr = new Date(use.last).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-                                  usageHtml += \`<div class="flex items-center justify-between p-3 border-b border-slate-100 dark:border-darkborder/50 last:border-0"><div class="flex flex-col"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">\${p.name}</span><span class="text-[10px] text-slate-400 font-mono">\${p.id.split('-')[0]}...</span></div><div class="flex flex-col items-end"><span class="text-xs font-bold text-emerald-500">\${use.connects} Conns</span><span class="text-[10px] text-slate-400">\${timeStr}</span></div></div>\`;
+                                  usageHtml += `<div class="flex items-center justify-between p-3 border-b border-slate-100 dark:border-darkborder/50 last:border-0"><div class="flex flex-col"><span class="text-sm font-bold text-slate-700 dark:text-slate-200">${p.name}</span><span class="text-[10px] text-slate-400 font-mono">${p.id.split('-')[0]}...</span></div><div class="flex flex-col items-end"><span class="text-xs font-bold text-emerald-500">${use.connects} Conns</span><span class="text-[10px] text-slate-400">${timeStr}</span></div></div>`;
                               }
                           });
                           usageCont.innerHTML = usageHtml || '<p class="text-xs text-slate-400 text-center py-4">' + (i18n[lang]?.no_active_conn || 'No active connection data yet.') + '</p>';
@@ -4815,9 +4815,9 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
               const totalUsersEl = __id('stat-total-users');
               if (totalUsersEl) totalUsersEl.textContent = totalUsersVal;
               const activeUsersEl = __id('stat-active-users');
-              if (activeUsersEl) activeUsersEl.textContent = \`\${activeSubscribers} / \${pausedSubscribers}\`;
+              if (activeUsersEl) activeUsersEl.textContent = `${activeSubscribers} / ${pausedSubscribers}`;
               const totalTrafficEl = __id('stat-total-traffic');
-              if (totalTrafficEl) totalTrafficEl.textContent = \`\${totalGBSum} \${i18n[lang]?.ov_gb_unit || 'GB'}\`;
+              if (totalTrafficEl) totalTrafficEl.textContent = `${totalGBSum} ${i18n[lang]?.ov_gb_unit || 'GB'}`;
               const autoDisabledEl = __id('stat-auto-disabled');
               if (autoDisabledEl) autoDisabledEl.textContent = autoDisabledCount;
 
@@ -4835,19 +4835,19 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                           let timeStr = u.disabledAt ? new Date(u.disabledAt).toLocaleString() : '-';
                           let reasonIcon = (typeof ico==='function') ? ico(u.disabledReason.includes('Traffic') ? 'chart' : (u.disabledReason.includes('Expiration') ? 'calendar' : 'warn'), 16) : '';
                           let btnLabel = lang === 'fa' ? 'فعال‌سازی مجدد' : 'Re-enable';
-                          return \`
+                          return `
                               <div class="flex items-center justify-between p-3 bg-white/70 dark:bg-slate-800/50 rounded-xl border border-red-100 dark:border-red-800/20 hover:shadow-md transition-shadow">
                                   <div class="flex items-center gap-3 flex-1 min-w-0">
-                                      <div class="text-lg">\${reasonIcon}</div>
+                                      <div class="text-lg">${reasonIcon}</div>
                                       <div class="min-w-0">
-                                          <div class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">\${u.name}</div>
-                                          <div class="text-[11px] text-red-500 dark:text-red-400 font-medium">\${u.disabledReason}</div>
-                                          <div class="text-[10px] text-slate-400 mt-0.5">\${timeStr}</div>
+                                          <div class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">${u.name}</div>
+                                          <div class="text-[11px] text-red-500 dark:text-red-400 font-medium">${u.disabledReason}</div>
+                                          <div class="text-[10px] text-slate-400 mt-0.5">${timeStr}</div>
                                       </div>
                                   </div>
-                                  <button onclick="togglePauseUser('\${u.id}')" class="ml-3 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold rounded-lg shadow-sm transition-colors whitespace-nowrap">\${btnLabel}</button>
+                                  <button onclick="togglePauseUser('${u.id}')" class="ml-3 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold rounded-lg shadow-sm transition-colors whitespace-nowrap">${btnLabel}</button>
                               </div>
-                          \`;
+                          `;
                       }).join('');
                   } else {
                       disabledPanel.classList.add('hidden');
@@ -4934,7 +4934,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
               // Alias users to the paged list for downstream compatibility
               users = pagedUsers;
               if (users.length === 0) {
-                  tbl.innerHTML = \`<div class="col-span-full px-4 py-8 text-center text-slate-400 text-sm" data-i18n="no_users">\${i18n[lang].no_users}</div>\`;
+                  tbl.innerHTML = `<div class="col-span-full px-4 py-8 text-center text-slate-400 text-sm" data-i18n="no_users">${i18n[lang].no_users}</div>`;
                   return;
               }
               let tblHtml = '';
@@ -4957,7 +4957,7 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                       expTxt = lang === 'fa' ? date.toLocaleDateString('fa-IR') : date.toLocaleDateString();
                       if (Date.now() > u.expiryMs) { 
                           const expiredTxt = lang === 'fa' ? ' (منقضی شده)' : ' (Expired)';
-                          expTxt += \` <span class="text-xs text-red-500 font-bold">\${expiredTxt}</span>\`; 
+                          expTxt += ` <span class="text-xs text-red-500 font-bold">${expiredTxt}</span>`; 
                           isExp = true; 
                       }
                   }
@@ -4972,13 +4972,13 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                   let resetTitle = lang === 'fa' ? 'بازنشانی مصرف ترافیک' : 'Reset Traffic Metrics';
                   let deleteTitle = lang === 'fa' ? 'حذف کاربر' : 'Delete User';
 
-                   let linkHtml = \`<button onclick="copyData('sync-\${u.id}')" class="native-press flex-1 min-h-[44px] flex items-center justify-center gap-1 text-primary hover:text-blue-700 bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 py-2 rounded-lg text-[11px] font-bold" title="\${linkTitle}" aria-label="\${linkTitle}">${typeof ico==='function'?ico('link',14):''} <span>\${lang==='fa'?'کپی لینک':'Copy'}</span></button>\`;
+                   let linkHtml = `<button onclick="copyData('sync-${u.id}')" class="native-press flex-1 min-h-[44px] flex items-center justify-center gap-1 text-primary hover:text-blue-700 bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 py-2 rounded-lg text-[11px] font-bold" title="${linkTitle}" aria-label="${linkTitle}">${typeof ico==='function'?ico('link',14):''} <span>${lang==='fa'?'کپی لینک':'Copy'}</span></button>`;
                    
-                   let pauseBtnHtml = \`<button onclick="togglePauseUser('\${u.id}')" class="native-press flex-1 flex items-center justify-center \${u.isPaused ? 'text-green-500 hover:text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50' : 'text-amber-500 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-800/50'} py-2 rounded-lg" title="\${pauseTitle}">\${u.isPaused ? (typeof ico==='function'?ico('play',14):'') : (typeof ico==='function'?ico('pause',14):'')}</button>\`;
+                   let pauseBtnHtml = `<button onclick="togglePauseUser('${u.id}')" class="native-press flex-1 flex items-center justify-center ${u.isPaused ? 'text-green-500 hover:text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-800/50' : 'text-amber-500 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-900/30 dark:hover:bg-amber-800/50'} py-2 rounded-lg" title="${pauseTitle}">${u.isPaused ? (typeof ico==='function'?ico('play',14):'') : (typeof ico==='function'?ico('pause',14):'')}</button>`;
 
-                   let editBtnHtml = \`<button onclick="editUser('\${u.id}')" class="native-press flex-1 flex items-center justify-center text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-800/50 py-2 rounded-lg" title="\${editTitle}">${typeof ico==='function'?ico('edit',14):''}</button>\`;
+                   let editBtnHtml = `<button onclick="editUser('${u.id}')" class="native-press flex-1 flex items-center justify-center text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-800/50 py-2 rounded-lg" title="${editTitle}">${typeof ico==='function'?ico('edit',14):''}</button>`;
 
-                   let resetBtnHtml = \`<button onclick="resetUserTraffic('\${u.id}')" class="native-press flex-1 flex items-center justify-center text-violet-500 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 dark:bg-violet-900/30 dark:hover:bg-violet-800/50 py-2 rounded-lg" title="\${resetTitle}">${typeof ico==='function'?ico('refresh',14):''}</button>\`;
+                   let resetBtnHtml = `<button onclick="resetUserTraffic('${u.id}')" class="native-press flex-1 flex items-center justify-center text-violet-500 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 dark:bg-violet-900/30 dark:hover:bg-violet-800/50 py-2 rounded-lg" title="${resetTitle}">${typeof ico==='function'?ico('refresh',14):''}</button>`;
 
                   let isAutoDisabled = u.isPaused && u.disabledReason;
                   let disableInfoHtml = '';
@@ -4987,16 +4987,16 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                       let timeLabel = u.disabledAt ? new Date(u.disabledAt).toLocaleString() : '';
                       let reasonTitle = lang === 'fa' ? 'علت غیرفعال‌سازی' : 'Disable Reason';
                       let timeTitle = lang === 'fa' ? 'زمان غیرفعال‌سازی' : 'Disabled At';
-                      disableInfoHtml = \`
+                      disableInfoHtml = `
                           <div class="mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30">
                               <div class="flex items-center gap-1.5 text-[10px] font-bold text-red-600 dark:text-red-400">
                                   <span>${typeof ico==='function'?ico('warn',12):''}</span>
-                                  <span>\${reasonTitle}:</span>
+                                  <span>${reasonTitle}:</span>
                               </div>
-                              <div class="text-[10px] text-red-500 dark:text-red-300 mt-0.5">\${reasonLabel}</div>
-                              \${timeLabel ? \`<div class="text-[9px] text-slate-400 mt-1">\${timeTitle}: \${timeLabel}</div>\` : ''}
+                              <div class="text-[10px] text-red-500 dark:text-red-300 mt-0.5">${reasonLabel}</div>
+                              ${timeLabel ? `<div class="text-[9px] text-slate-400 mt-1">${timeTitle}: ${timeLabel}</div>` : ''}
                           </div>
-                      \`;
+                      `;
                   }
 
                   let rawSync = window.ManagerProfiles?.find(p => p.id === u.id)?.sync || '';
@@ -5004,62 +5004,62 @@ function __qAll(s) { try { return document.querySelectorAll(s); } catch(e) { ret
                       rawSync += rawSync.includes('?') ? '&flag=a' : '?flag=a';
                   }
 
-                  tblHtml += \`<div class="native-press bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-4 hover:shadow-md transition-shadow">
+                  tblHtml += `<div class="native-press bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder p-4 hover:shadow-md transition-shadow">
                       <div class="flex items-center justify-between mb-3">
                           <div class="flex items-center gap-2 min-w-0 flex-1">
-                              <span class="w-2 h-2 rounded-full shrink-0 \${u.isPaused ? (isAutoDisabled ? 'bg-red-500' : 'bg-amber-500') : (isExp ? 'bg-red-400' : 'bg-emerald-500')}"></span>
-                              <span class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">\${u.name}</span>
-                              \${u.proxyIpGeo ? \`<span class="text-[10px] px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 font-semibold shrink-0">\${u.proxyIpGeo.flag}</span>\` : ''}
+                              <span class="w-2 h-2 rounded-full shrink-0 ${u.isPaused ? (isAutoDisabled ? 'bg-red-500' : 'bg-amber-500') : (isExp ? 'bg-red-400' : 'bg-emerald-500')}"></span>
+                              <span class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">${u.name}</span>
+                              ${u.proxyIpGeo ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 font-semibold shrink-0">${u.proxyIpGeo.flag}</span>` : ''}
                           </div>
-                          <input type="hidden" id="sync-\${u.id}" value="\${rawSync}">
+                          <input type="hidden" id="sync-${u.id}" value="${rawSync}">
                       </div>
                       <div class="flex items-center gap-1 mb-3">
-                          \${linkHtml}
-                          \${pauseBtnHtml}
-                          \${editBtnHtml}
-                          \${resetBtnHtml}
-                          <button onclick="deleteUser('\${u.id}')" class="native-press flex-1 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 py-2 rounded-lg transition-colors text-sm" title="\${deleteTitle}">${typeof ico==='function'?ico('trash',14):''}</button>
+                          ${linkHtml}
+                          ${pauseBtnHtml}
+                          ${editBtnHtml}
+                          ${resetBtnHtml}
+                          <button onclick="deleteUser('${u.id}')" class="native-press flex-1 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 py-2 rounded-lg transition-colors text-sm" title="${deleteTitle}">${typeof ico==='function'?ico('trash',14):''}</button>
                       </div>
                       <div class="flex flex-wrap gap-1 mb-3">
-                          \${u.isPaused && u.disabledReason ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">Auto-Disabled</span>\` : ''}
-                          \${u.userMode ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">\${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'Both'}</span>\` : ''}
-                          \${u.userPorts ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300">\${u.userPorts}</span>\` : ''}
-                           \${u.maxConfigs ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300">\${u.maxConfigs} cfgs</span>\` : ''}
-                           \${u.connLimit ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-300">\${u.connLimit} conn</span>\` : ''}
+                          ${u.isPaused && u.disabledReason ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">Auto-Disabled</span>` : ''}
+                          ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'Both'}</span>` : ''}
+                          ${u.userPorts ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300">${u.userPorts}</span>` : ''}
+                           ${u.maxConfigs ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300">${u.maxConfigs} cfgs</span>` : ''}
+                           ${u.connLimit ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-300">${u.connLimit} conn</span>` : ''}
                       </div>
-                      \${disableInfoHtml}
+                      ${disableInfoHtml}
                       <div class="grid grid-cols-2 gap-3">
                           <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5">
-                              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">\${totalLabel}</div>
-                              <div class="text-sm font-black text-slate-800 dark:text-white">\${(userReqs/6000).toFixed(2)} <span class="text-[10px] font-semibold text-slate-400">GB</span></div>
-                              \${u.limitTotalReq ? \`
+                              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">${totalLabel}</div>
+                              <div class="text-sm font-black text-slate-800 dark:text-white">${(userReqs/6000).toFixed(2)} <span class="text-[10px] font-semibold text-slate-400">GB</span></div>
+                              ${u.limitTotalReq ? `
                               <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
-                                  <div class="bg-gradient-to-r \${parseFloat(perT) > 85 ? 'from-red-500 to-rose-600' : parseFloat(perT) > 60 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500'} h-full rounded-full" style="width: \${perT}"></div>
+                                  <div class="bg-gradient-to-r ${parseFloat(perT) > 85 ? 'from-red-500 to-rose-600' : parseFloat(perT) > 60 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500'} h-full rounded-full" style="width: ${perT}"></div>
                               </div>
                               <div class="flex items-center justify-between mt-1">
-                                  <span class="text-[9px] text-slate-400">/ \${(u.limitTotalReq/6000).toFixed(2)} GB</span>
-                                  \${perT !== '-' ? \`<span class="text-[9px] font-bold \${parseFloat(perT) > 85 ? 'text-red-500' : parseFloat(perT) > 60 ? 'text-amber-500' : 'text-emerald-500'}">\${perT}</span>\` : ''}
+                                  <span class="text-[9px] text-slate-400">/ ${(u.limitTotalReq/6000).toFixed(2)} GB</span>
+                                  ${perT !== '-' ? `<span class="text-[9px] font-bold ${parseFloat(perT) > 85 ? 'text-red-500' : parseFloat(perT) > 60 ? 'text-amber-500' : 'text-emerald-500'}">${perT}</span>` : ''}
                               </div>
-                              \` : '<div class="text-[9px] text-slate-400 mt-1">' + unlimitedTxt + '</div>'}
+                              ` : '<div class="text-[9px] text-slate-400 mt-1">' + unlimitedTxt + '</div>'}
                           </div>
                           <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5">
-                              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">\${dailyLabel}</div>
-                              <div class="text-sm font-black text-slate-800 dark:text-white">\${userDReqs} <span class="text-[10px] font-semibold text-slate-400">\${rLabel}</span></div>
-                              \${u.limitDailyReq ? \`
+                              <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">${dailyLabel}</div>
+                              <div class="text-sm font-black text-slate-800 dark:text-white">${userDReqs} <span class="text-[10px] font-semibold text-slate-400">${rLabel}</span></div>
+                              ${u.limitDailyReq ? `
                               <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
-                                  <div class="bg-gradient-to-r \${parseFloat(perD) > 85 ? 'from-red-500 to-rose-600' : parseFloat(perD) > 60 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500'} h-full rounded-full" style="width: \${perD}"></div>
+                                  <div class="bg-gradient-to-r ${parseFloat(perD) > 85 ? 'from-red-500 to-rose-600' : parseFloat(perD) > 60 ? 'from-amber-500 to-orange-500' : 'from-emerald-500 to-teal-500'} h-full rounded-full" style="width: ${perD}"></div>
                               </div>
                               <div class="flex items-center justify-between mt-1">
-                                  <span class="text-[9px] text-slate-400">/ \${(u.limitDailyReq/6000).toFixed(2)} GB</span>
-                                  \${perD !== '-' ? \`<span class="text-[9px] font-bold \${parseFloat(perD) > 85 ? 'text-red-500' : parseFloat(perD) > 60 ? 'text-amber-500' : 'text-emerald-500'}">\${perD}</span>\` : ''}
+                                  <span class="text-[9px] text-slate-400">/ ${(u.limitDailyReq/6000).toFixed(2)} GB</span>
+                                  ${perD !== '-' ? `<span class="text-[9px] font-bold ${parseFloat(perD) > 85 ? 'text-red-500' : parseFloat(perD) > 60 ? 'text-amber-500' : 'text-emerald-500'}">${perD}</span>` : ''}
                               </div>
-                              \` : '<div class="text-[9px] text-slate-400 mt-1">' + unlimitedTxt + '</div>'}
+                              ` : '<div class="text-[9px] text-slate-400 mt-1">' + unlimitedTxt + '</div>'}
                           </div>
                       </div>
                       <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                          <span class="text-[10px] text-slate-400">\${typeof ico==='function'?ico('calendar',12):''} \${expTxt}</span>
+                          <span class="text-[10px] text-slate-400">${typeof ico==='function'?ico('calendar',12):''} ${expTxt}</span>
                       </div>
-                  \`;
+                  `;
                   tblHtml += '</div>';
               });
               tbl.innerHTML = tblHtml;
@@ -5753,7 +5753,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               
               async function resolveOne(domain) {
                   try {
-                      const res = await fetch(\`https://cloudflare-dns.com/dns-query?name=\${encodeURIComponent(domain)}&type=A\`, { 
+                      const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=A`, { 
                           headers: { 'accept': 'application/dns-json' }
                       });
                       const data = await res.json();
@@ -5766,7 +5766,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                       }
                   } catch(e) {
                       try {
-                          const res = await fetch(\`https://dns.google/resolve?name=\${encodeURIComponent(domain)}&type=A\`);
+                          const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`);
                           const data = await res.json();
                           if (data && data.Answer) {
                               data.Answer.forEach(ans => {
@@ -5811,9 +5811,9 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                       window._updateData = data;
                       if (window.ManagerConfig?.autoUpdate && data.canDeploy) {
                           const format = window.ManagerConfig.autoUpdateFormat || 'normal';
-                          const formatEl = __q(\`input[name="auto-update-format"][value="\${format}"]\`);
+                          const formatEl = __q(`input[name="auto-update-format"][value="${format}"]`);
                           if (formatEl) formatEl.checked = true;
-                          const autoRadio = __q(\`input[name="auto-update-format"][value="\${format}"]\`);
+                          const autoRadio = __q(`input[name="auto-update-format"][value="${format}"]`);
                           if (autoRadio) autoRadio.checked = true;
                           doUpdate();
                       } else {
@@ -6184,7 +6184,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
   
       
-        const custom = \`\${map.day} \${map.month} \${map.year} \${map.hour}:\${map.minute}:\${map.second}\`;
+        const custom = `${map.day} ${map.month} ${map.year} ${map.hour}:${map.minute}:${map.second}`;
 
     __id("net-datetime").innerText = custom;
     
