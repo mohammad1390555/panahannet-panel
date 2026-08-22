@@ -10583,6 +10583,7 @@ async function getDashboardUI(hasDB) {
         BOT_LABEL: publicBotLabel(),
         API_ROUTE: sysConfig.apiRoute,
         DESIGN_CSS: typeof designSystemCSS === 'function' ? designSystemCSS() : "",
+        ICO_FUNCTION: typeof ico === 'function' ? ico.toString() : "function ico(){return ''}",
     };
     let html = await loadHtmlPage("dashboard", vars);
     // Handle hasDB conditional
