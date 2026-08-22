@@ -2620,7 +2620,7 @@ workerHandler = /** @type {any} */ ({
                 });
             }
 
-            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.syncPanel || reqPath === routes.logs || isSyncRoute || isUsersRoute || isStatsRoute || isUpdateRoute || isApiKeysRoute || isShopRoute || isTrendsRoute || isChangelogRoute || isSecurityRoute || isTgFileRoute || isAiAdminRoute || isAiUserRoute || isAiConfigRoute;
+            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.syncPanel || reqPath === routes.logs || isSyncRoute || isUsersRoute || isStatsRoute || isUpdateRoute || isApiKeysRoute || isShopRoute || isTrendsRoute || isChangelogRoute || isSecurityRoute || isTgFileRoute || isAiAdminRoute || isAiUserRoute || isAiConfigRoute || reqPath === routes.payment || reqPath === routes.revenue || reqPath === routes.fraud || reqPath === routes.campaign || reqPath.endsWith('/api/payment') || reqPath.endsWith('/api/revenue') || reqPath.endsWith('/api/fraud') || reqPath.endsWith('/api/campaign');
 
             if (!isTelemetryStream && !isAuthorizedRoute) {
                 if (/^\/sub(\/|$)/.test(reqPath) || reqPath.startsWith("/api/")) {
