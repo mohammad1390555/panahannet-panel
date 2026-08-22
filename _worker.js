@@ -7303,9 +7303,6 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
         return true;
     }
 
-    return false;
-}
-
 
     // ═══ NEW: Add User Flow ═══
     if (action === "adminadduser") {
@@ -7601,6 +7598,10 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
         return true;
     }
 
+
+
+    return false;
+}
 
 /**
  * Broadcast helper — sends a message to all linked Telegram users with
