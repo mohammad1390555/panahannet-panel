@@ -10593,9 +10593,3 @@ async function getDashboardUI(hasDB) {
     }
     return html;
 }
-
-</script>
-</body>
-  </html>
-    `;
-  }
