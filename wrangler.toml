@@ -2,6 +2,7 @@ name = "panahannet"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["allow_eval_during_startup"]
+account_id = "99a3e6928ecc657313a53a9c269592bd"
 
 [[d1_databases]]
 binding = "IOT_DB"
@@ -10,3 +11,4 @@ database_id = "e4470318-2812-4133-b140-c89298afc094"
 
 [observability]
 enabled = true
+

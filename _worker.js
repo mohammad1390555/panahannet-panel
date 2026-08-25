@@ -5909,17 +5909,14 @@ function isTgAdmin(tgUserId) {
 }
 
 function tgMainMenu(lang, linked) {
-    const rows = [
-        [{ text: tgT(lang, "main_buy"), callback_data: "u:buy" }, { text: tgT(lang, "main_services"), callback_data: "u:services:0" }],
-        [{ text: tgT(lang, "main_wallet"), callback_data: "u:wallet" }, { text: tgT(lang, "main_referral"), callback_data: "u:ref" }],
-        [{ text: tgT(lang, "main_trial"), callback_data: "u:trial" }, { text: tgT(lang, "main_account"), callback_data: "u:account" }],
-        [{ text: "📊 مصرف من", callback_data: "u:usage" }, { text: tgT(lang, "main_support"), callback_data: "u:support" }],
-        [{ text: tgT(lang, "main_lang"), callback_data: "u:lang" }]
-    ];
-    if (linked && isTgAdmin(linked.tgUserId)) {
-        rows.push([{ text: "🛡 پنل مدیریت", callback_data: "u:adminhome" }]);
-    }
-    return rows;
+        const rows = [
+            [{ text: tgT(lang, "main_buy"), callback_data: "u:buy" }, { text: tgT(lang, "main_services"), callback_data: "u:services:0" }],
+            [{ text: tgT(lang, "main_wallet"), callback_data: "u:wallet" }, { text: tgT(lang, "main_referral"), callback_data: "u:ref" }],
+            [{ text: tgT(lang, "main_trial"), callback_data: "u:trial" }, { text: tgT(lang, "main_account"), callback_data: "u:account" }],
+            [{ text: "📊 مصرف من", callback_data: "u:usage" }, { text: tgT(lang, "main_support"), callback_data: "u:support" }],
+            [{ text: tgT(lang, "main_lang"), callback_data: "u:lang" }]
+        ];
+        return rows;
 }
 
 function tgClearState(tgUserId) {
@@ -6405,6 +6402,29 @@ async function handleTelegramUserMode(update, env, hostName, ctx) {
             parse_mode: "Markdown",
             reply_markup: { inline_keyboard: mainMenu }
         });
+        return true;
+    }
+    } else if (msg && text.startsWith("/admin")) {
+        if (!isTgAdmin(tgUserId)) return true;
+        const users = sysConfig.users || [];
+        const now = Date.now();
+        const active = users.filter(u => !u.isPaused && (!u.expiryMs || u.expiryMs > now)).length;
+        const expSoon = users.filter(u => u.expiryMs && u.expiryMs > now && u.expiryMs < now + 3*86400000).length;
+        await tgApiCall("sendMessage", {
+            chat_id: chatId,
+            text: `🛡 *پنل مدیریت ${PANEL_BRAND}*\\n\\n📊 *خلاصه وضعیت*\\n👥 کاربران: *${users.length}* (${active} فعال)\\n⚠️ انقضا نزدیک: *${expSoon}*\\n📦 پکیج‌ها: *${(sysConfig.tgPackages||[]).length}* تعریف‌شده\\n💰 کیف‌پول: فعال`,
+            parse_mode: "Markdown",
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: "👥 مدیریت و ویرایش کاربران", callback_data: "u:adminusers:0" }, { text: "➕ افزودن کاربر جدید", callback_data: "u:adminadduser" }],
+                    [{ text: "📦 مشاهده و ویرایش پکیج‌ها", callback_data: "u:agentpkgs" }, { text: "📊 گزارشات و آمار استفاده", callback_data: "u:agentstats" }],
+                    [{ text: "💰 مدیریت فروش و تراکنش‌ها", callback_data: "u:adminsales" }, { text: "🧾 بررسی و تأیید رسیدها", callback_data: "u:agentrcpt" }],
+                    [{ text: "🎟 مدیریت کدهای تخفیف", callback_data: "u:agentpromos" }, { text: "📢 ارسال پیام همگانی", callback_data: "u:agentbc" }],
+                    [{ text: "🔍 جستجوی پیشرفته", callback_data: "u:agentsearch" }, { text: "🚫 لیست کاربران غیرفعال", callback_data: "u:agentdisabled" }],
+                    [{ text: "⚙️ تنظیمات عمومی ربات", callback_data: "u:agentsettings" }, { text: "📋 مشاهده لاگ‌های فعالیت", callback_data: "u:agentlogs" }],
+                    [{ text: "👤 سوییچ به پنل کاربری", callback_data: "user_panel" }],
+                ]
+            });
         return true;
     }
 
@@ -7296,6 +7316,7 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
     }
 
     // ── Admin home (multi-admin) ──
+    // ── Admin home (multi-admin) ──
     if (action === "adminhome") {
         if (!isTgAdmin(tgUserId)) return true;
         const users = sysConfig.users || [];
@@ -7303,15 +7324,15 @@ async function tgHandleCallback(env, lang, chatId, messageId, tgUserId, linked, 
         const active = users.filter(u => !u.isPaused && (!u.expiryMs || u.expiryMs > now)).length;
         const expSoon = users.filter(u => u.expiryMs && u.expiryMs > now && u.expiryMs < now + 3*86400000).length;
         await tgSendOrEdit(chatId, messageId,
-            `🛡 *پنل مدیریت ${PANEL_BRAND}*\n\n👥 کاربران: *${users.length}* (فعال: ${active})\n⚠️ انقضا نزدیک: *${expSoon}*\n🛒 فروشگاه: *${(sysConfig.tgPackages||[]).length}* پکیج\n💰 کیف‌پول کاربران: فعال`,
+            `🛡 *پنل مدیریت ${PANEL_BRAND}*\\n\\n📊 *خلاصه وضعیت*\\n👥 کاربران: *${users.length}* (${active} فعال)\\n⚠️ انقضا نزدیک: *${expSoon}*\\n📦 پکیج‌ها: *${(sysConfig.tgPackages||[]).length}* تعریف‌شده\\n💰 کیف‌پول: فعال`,
             [
-                [{ text: "👥 مدیریت کاربران", callback_data: "u:adminusers:0" }, { text: "➕ کاربر جدید", callback_data: "u:adminadduser" }],
-                [{ text: "📦 پکیج‌ها", callback_data: "u:adminpkgs" }, { text: "📊 آمار و گزارش", callback_data: "u:adminstats" }],
-                [{ text: "💰 فروش و مالی", callback_data: "u:adminsales" }, { text: "🧾 رسیدها", callback_data: "u:adminrcpt" }],
-                [{ text: "🎟 کد تخفیف", callback_data: "u:adminpromos" }, { text: "📢 اطلاع‌رسانی", callback_data: "u:adminbc" }],
-                [{ text: "🔍 جستجو", callback_data: "u:adminsearch" }, { text: "🚫 غیرفعال‌ها", callback_data: "u:admindisabled" }],
-                [{ text: "⚙️ تنظیمات ربات", callback_data: "u:adminsettings" }, { text: "📋 لاگ فعالیت", callback_data: "u:adminlogs" }],
-                [{ text: "👤 پنل کاربری", callback_data: "user_panel" }],
+                [{ text: "👥 مدیریت و ویرایش کاربران", callback_data: "u:adminusers:0" }, { text: "➕ افزودن کاربر جدید", callback_data: "u:adminadduser" }],
+                [{ text: "📦 مشاهده و ویرایش پکیج‌ها", callback_data: "u:agentpkgs" }, { text: "📊 گزارشات و آمار استفاده", callback_data: "u:agentstats" }],
+                [{ text: "💰 مدیریت فروش و تراکنش‌ها", callback_data: "u:adminsales" }, { text: "🧾 بررسی و تأیید رسیدها", callback_data: "u:agentrcpt" }],
+                [{ text: "🎟 مدیریت کدهای تخفیف", callback_data: "u:agentpromos" }, { text: "📢 ارسال پیام همگانی", callback_data: "u:agentbc" }],
+                [{ text: "🔍 جستجوی پیشرفته", callback_data: "u:agentsearch" }, { text: "🚫 لیست کاربران غیرفعال", callback_data: "u:agentdisabled" }],
+                [{ text: "⚙️ تنظیمات عمومی ربات", callback_data: "u:agentsettings" }, { text: "📋 مشاهده لاگ‌های فعالیت", callback_data: "u:agentlogs" }],
+                [{ text: "👤 سوییچ به پنل کاربری", callback_data: "user_panel" }],
             ]);
         return true;
     }
