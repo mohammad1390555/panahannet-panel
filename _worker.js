@@ -9182,15 +9182,14 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     tgState[chatId] = { step: "tg_edit_cf_acc" };
                     safeWaitUntil(ctx, d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
                     await sendOrEdit(chatId, `☁️ **${t("tg_cf_settings")}**\n\n1️⃣ CF Account ID: \`${sysConfig.cfAccountId || '—'}\`\n\n${t("tg_new_val")}\n_send /skip to keep current_`, { inline_keyboard: [[{ text: "❌ " + t("btn_cancel"), callback_data: "tg_advanced_menu" }]] }, messageId);
-                }
-    } else if (data === "user_panel") {
-        tgClearState(tgUserId);
-        await tgPersist(env);
-        const menu = tgMainMenu(lang, linked);
-        const welcomeText = tgWelcomeText(lang, linked, linked.firstName || "") + `\n\n_v${CURRENT_VERSION}_`;
-        await tgSendOrEdit(chatId, messageId, welcomeText, menu);
-        return true;
-    }
+            } else if (data === "user_panel") {
+                tgClearState(tgUserId);
+                await tgPersist(env);
+                const menu = tgMainMenu(lang, linked);
+                const welcomeText = tgWelcomeText(lang, linked, linked.firstName || "") + `\n\n_v${CURRENT_VERSION}_`;
+                await tgSendOrEdit(chatId, messageId, welcomeText, menu);
+                return true;
+            }
                 
                 safeWaitUntil(ctx, fetch(`${tgApi}/answerCallbackQuery`, {
                     method: 'POST',
