@@ -1,3 +1,4 @@
+// ─── Made by Mohammad — github.com/mohammad1390555 ───
 // @ts-nocheck
 /* ============================================================================
  * PANAHANNET PANEL v3.5.25

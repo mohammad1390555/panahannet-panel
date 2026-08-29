@@ -1,3 +1,4 @@
+<!-- ─── Made by Mohammad — github.com/mohammad1390555 ─── -->
 query GetDailyUsage($accountId: String!, $start: ISO8601DateTime!) { viewer { accounts(filter: {accountTag: $accountId}) { workersInvocationsAdaptive(limit: 1, filter: { datetime_geq: $start }) { sum { requests } } } } }`;
         const variables = { accountId: accountId, start: currentDate };
         
